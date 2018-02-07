@@ -3,6 +3,7 @@ import './App.css';
 
 import Header from './Header';
 import Footer from './Footer';
+import LineChart from './LineChart';
 
 const App = () => (
   <div className="App">
@@ -19,6 +20,7 @@ const App = () => (
                   </li>
                 </ol>
               </div>
+              <LineChart />
             </div>
           </div>
         </div>
