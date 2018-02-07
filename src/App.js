@@ -9,21 +9,15 @@ const App = () => (
   <div className="App">
     <Header />
     <div id="content-wrapper">
-      <div id="content-wrapper2">
-        <div id="content-wrapper-center">
-          <div id="content-wrapper-bottom">
-            <div id="content">
-              <div id="breadcrumb">
-                <ol>
-                  <li className="first">
-                    <a href="http://uhero.hawaii.edu">Home</a>
-                  </li>
-                </ol>
-              </div>
-              <LineChart />
-            </div>
-          </div>
+      <div id="content">
+        <div id="breadcrumb">
+          <ol>
+            <li className="first">
+              <a href="http://uhero.hawaii.edu">Home</a>
+            </li>
+          </ol>
         </div>
+        <LineChart />
       </div>
     </div>
     <Footer />
