@@ -1,16 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+
+import Header from './Header';
+import Footer from './Footer';
 
 const App = () => (
   <div className="App">
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      <h1 className="App-title">Welcome to React</h1>
-    </header>
-    <p className="App-intro">
-      To get started, edit <code>src/App.js</code> and save to reload.
-    </p>
+    <Header />
+    <div id="content-wrapper">
+      <div id="content-wrapper2">
+        <div id="content-wrapper-center">
+          <div id="content-wrapper-bottom">
+            <div id="content">
+              <div id="breadcrumb">
+                <ol>
+                  <li className="first">
+                    <a href="http://uhero.hawaii.edu">Home</a>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <Footer />
   </div>
 );
 

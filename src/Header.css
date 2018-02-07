@@ -1,0 +1,95 @@
+#header{
+  background: url(./img/bg_header.png) repeat-x 0 0;
+}
+
+.header-wrapper {
+  background: url(./img/bg_header_bottom.png) no-repeat 0 33px;
+  height: 116px;
+  margin: 0 auto;
+  padding: 4px 0 0 0 ;
+  position: relative;
+  width: 1003px;
+}
+  
+#header form.mailing-list {
+  float: right;
+  padding: 0 4px 0 0;
+}
+  
+#header h1 {
+  float: left;
+  left: 5px;
+  position: absolute;
+  top: 57px;
+}
+  
+#header h1 a {
+  cursor: pointer;
+  display: block;
+  height: 36px;
+  overflow: hidden;
+  text-indent: -8000px;
+  width: 691px;
+}
+  
+#header form.mailing-list ul.topmenu {
+  display: block;
+  float: left;
+}
+  
+#header form.mailing-list ul.topmenu li {
+  color: #1893B8;
+  float: left;
+  font-size: 12px;
+  list-style: none;
+  padding: 4px 2px 0 0;
+}
+  
+#header form.mailing-list ul.topmenu .facebook {
+  background: url(./img/btn-facebook.png) left -2px no-repeat;
+  padding-left: 21px;
+}
+  
+#header form.mailing-list ul.topmenu li a {
+  color: #FFF;
+  margin: 0 2px;
+}
+  
+#header form.mailing-list fieldset label {
+  color: #94D3E6;
+  display: block;
+  float: left;
+  padding: 6px 8px 0 0;
+}
+  
+#header form.search {
+  float: right;
+  right: 2px;
+  position: absolute;
+  top: 61px;
+}
+  
+#header form.search fieldset input[type="text"] {
+  background: url(./img/bg_search_text.png) no-repeat 0 0;
+  border: none 0;
+  color: #FFF;
+  display: block;
+  float: left;
+  height: 24px;
+  margin: 0 4px 0 0;
+  padding: 5px 0 0 13px;
+  width: 196px;
+}
+  
+#header form.search fieldset input[type="submit"] {
+  background: url(./img/button_search.png) no-repeat 0 0;
+  border: none 0;
+  cursor: pointer;
+  display: block;
+  float: left;
+  height: 29px;
+  line-height: 100%;
+  overflow: hidden;
+  text-indent:  -8000px;
+  width: 31px;
+}
