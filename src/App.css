@@ -1,9 +1,7 @@
-/* CONTENT CSS */
 #content-wrapper {
   position: relative;
   background: none;
   background-color: #FFF;
-  height: 1000px;
   margin: 0 auto;
   width: 1003px;
 }
@@ -35,4 +33,28 @@
 
 #content div#breadcrumb ol li {
   display: inline;
+}
+
+#dashboard-title {
+  background-image: url('http://www.uhero.hawaii.edu/assets/Dasboardbranding2.png');
+  background-position: 98% 0%;
+  background-repeat: no-repeat;
+  background-size: 15%;
+  border-bottom: solid 1.5px #C8C8C8;
+  padding: 40px 10px 15px;
+}
+
+#dash-title {
+  color: #1D667F;
+  font-family: verdana, sans-serif;
+  font-size: 27pt;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+#dash-sub-title {
+  color: #1D667F;
+  font-family: verdana, sans-serif;
+  font-size: 18pt;
+  text-transform: uppercase;
 }

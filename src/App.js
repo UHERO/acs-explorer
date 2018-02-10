@@ -17,6 +17,10 @@ const App = () => (
             </li>
           </ol>
         </div>
+        <div id="dashboard-title">
+          <h4 id="dash-title">Dashboard Title</h4>
+          <h4 id="dash-sub-title">Dashboard Subtitle</h4>
+        </div>
         <LineChart />
       </div>
     </div>
