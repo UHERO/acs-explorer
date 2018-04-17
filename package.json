@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "d3": "^5.0.0",
     "d3-scale": "^2.0.0",
+    "mapbox-gl": "^0.44.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.1.0",
+    "react-select": "^1.2.1",
     "semiotic": "^1.7.1"
   },
   "scripts": {
