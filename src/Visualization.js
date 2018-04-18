@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import StateMap from './StateMap';
 import VariableSelection from './VariableSelection';
 
@@ -25,7 +25,7 @@ or a ratio of medians cannot be calculated because one or both of the median est
 const acsVars = {
     DP02_0001E: 'Total_Households',
     DP02_0061PE: 'High_School_Grad_(%)',
-    DP03_0062E: 'Median_House_Income_($)',
+    DP03_0062E: 'Median_Household_Income_($)',
     DP02_0064PE: 'Bachelors_Degree_(%)',
     DP02_0065PE: 'Grad_Degree_(%)',
     DP03_0009PE: 'Unemp_Rate_(%)',
@@ -38,59 +38,68 @@ const acsVars = {
 const tractParams = '&for=tract:*&in=state:15%20county:*';
 const key = '&key=ad57a888cd72bea7153fa37026fca3dc19eb0134';
 
-const fetchData = (url) => (Comp) =>
-    class FetchData extends Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                data: {},
-                loading: false,
-                error: null,
-            };
-        }
+class Visualization extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: {},
+            loading: false,
+            error: null,
+            selectedAcsVar: {value: 'Median_Household_Income_($)', label: 'Median Household Income ($)'}
+        };
+        this.handleAcsVarChange = this.handleAcsVarChange.bind(this);
+    }
 
-        componentDidMount() {
-            this.setState({ loading: true });
-            fetch(url)
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('Error fetching data');
-                    }
-                })
-                .then((data) => {
-                    data[0].forEach((label, index) => acsVars[label] ? data[0][index] = acsVars[label] : data[0][index] = data[0][index]);
-                    let formattedCensusData = data.map((row) => {
-                        let obj = {};
-                        data[0].forEach((id, index) => {
-                            obj[id] = row[index];
-                        });
-                        return obj;
+    componentDidMount() {
+        this.setState({ loading: true });
+        fetch(baseURL + Object.keys(acsVars).join() + tractParams + key)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Error fetching data');
+                }
+            })
+            .then((data) => {
+                data[0].forEach((label, index) => acsVars[label] ? data[0][index] = acsVars[label] : data[0][index] = data[0][index]);
+                let formattedCensusData = data.map((row) => {
+                    let obj = {};
+                    data[0].forEach((id, index) => {
+                        obj[id] = row[index];
                     });
-                    this.setState({ data: formattedCensusData, loading: false })
-                })
-                .catch(error => this.setState({ error, loading: false }));
-        }
-
-        render() {
-            return <Comp {...this.props} {...this.state} />
-        }
+                    return obj;
+                });
+                this.setState({ data: formattedCensusData, loading: false })
+            })
+            .catch(error => this.setState({ error: error, loading: false }));
     }
 
-const Visualization = ({ data, loading, error }) => {
-    if (error) {
-        console.log('error', error)
+    handleAcsVarChange(acsVar) {
+        this.setState({ selectedAcsVar: acsVar });
+        console.log('acs var', acsVar);
     }
-    if (loading) {
-        return <p>Loading...</p>
+
+    render() {
+        if (this.state.error) {
+            console.log('error', this.state.error);
+        }
+        if (this.state.loading) {
+            return <p>Loading..</p>
+        }
+        return (
+            <div>
+                <VariableSelection
+                    vars={acsVars}
+                    selectedAcsVar={this.state.selectedAcsVar}
+                    onChangeSelected={this.handleAcsVarChange}
+                />
+                <StateMap
+                    acsData={this.state.data}
+                    selectedAcsVar={this.state.selectedAcsVar}
+                />
+            </div>
+        )
     }
-    return (
-        <div>
-            <VariableSelection vars={acsVars} />
-            <StateMap acsData={data} />
-        </div>
-    )
 }
 
-export default fetchData(baseURL + Object.keys(acsVars).join() + tractParams + key)(Visualization)
+export default Visualization
