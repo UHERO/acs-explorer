@@ -1,7 +1,8 @@
 .legend {
     font-family: sans-serif;
     position: absolute;
-    top: 200px;
+    top: 500px;
+    left: 925px;
 }
 
 .legend-color {
@@ -11,4 +12,8 @@
     margin-right: 5px;
     vertical-align: middle;
     width: 20px;
+}
+
+.legend-value {
+    vertical-align: middle;
 }

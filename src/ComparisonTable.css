@@ -2,16 +2,19 @@ table {
     margin: 0 auto;
     font-size: 12px;
     font-family: sans-serif;
+    width: 100%;
 }
 
 th, td {
     padding: 10px;
     border-bottom: 1px solid #F1F1F1;
+    font-size: 1.1em;
 }
 
 th {
     color: #1D667F;
     font-weight: bold;
+    text-align: right;
     text-transform: uppercase;
 }
 

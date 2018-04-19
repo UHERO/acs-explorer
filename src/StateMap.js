@@ -40,7 +40,11 @@ class StateMap extends React.Component {
                 center: [-157.9174, 20.2893],
                 zoom: 6
             });
+            this.map.addControl(new mapboxgl.NavigationControl());
             this.map.on('load', () => {
+                // Find layer with place names
+                const layers = this.map.getStyle().layers;
+                const symbolLayer = layers.find(l => l.type === 'symbol').id;
                 this.map.addSource('tracts', {
                     type: 'geojson',
                     data: higeojson
@@ -49,7 +53,9 @@ class StateMap extends React.Component {
                     id: 'census-tracts',
                     type: 'fill',
                     source: 'tracts'
-                });
+                },
+                // Add symbolLayer after census-tracts, so labels are placed above fill layer 
+                symbolLayer);
                 this.fillMapColor(values, selectedAcsVar);
             });
             const popup = new mapboxgl.Popup({
@@ -64,7 +70,7 @@ class StateMap extends React.Component {
                 const properties = e.features[0].properties;
                 let tooltipInfo = '';
                 Object.values(acsVars).forEach(v => tooltipInfo += v.replace(/_/g, ' ') + ': ' + properties[v].toLocaleString() + '<br>');
-                const tractName = '<b>' + properties.census_tra + ', ' + properties.census_t_1 + '</b>';
+                const tractName = '<b style="font-weight:bold;">' + properties.census_tra + ', ' + properties.census_t_1 + '</b>';
                 if (features.length) {
                     popup.setLngLat(coordinates)
                         .setHTML(tractName + '<br>' + tooltipInfo)
@@ -76,7 +82,6 @@ class StateMap extends React.Component {
             this.map.on('mouseleave', 'census-tracts', () => {
                 popup.remove();
             });
-            const compareTracts = this.state.compareTracts;
             const selectTractForComparison = (e) => this.selectTractForComparison(e);
             this.map.on('click', 'census-tracts', function (e) {
                 const tractProperties = e.features[0].properties;
@@ -161,11 +166,11 @@ class StateMap extends React.Component {
 
         return (
             <div>
-                <div ref="hiMap" style={style} />
+                <div ref='hiMap' style={style} />
                 <div className='legend'>
                     {legend.map((stop, index) => {
                         return (
-                            <div>
+                            <div key={stop[0]}>
                                 <span className='legend-color' style={{ backgroundColor: stop[1] }} />
                                 <span className='legend-value'>{`${stop[0].toLocaleString()}`}</span>
                             </div>

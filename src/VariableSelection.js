@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
+import './VariableSelection.css';
 
 class VariableSelection extends React.Component {
     constructor(props) {
@@ -14,10 +15,13 @@ class VariableSelection extends React.Component {
 
     render() {
         return (
-            <div>
-                <h3>1. Select a variable</h3>
+            <div style={{ padding: '10px' }}>
+                <ul>
+                    <li>Select a variable from the dropdown to update the map.</li>
+                    <li>Click on up to 2 census tracts to generate a comparison table below.</li>
+                </ul>
                 <Select
-                    name="acs-variable-select"
+                    name='acs-variable-select'
                     clearable={false}
                     searchable={false}
                     value={this.props.selectedAcsVar}
