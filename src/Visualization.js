@@ -24,16 +24,16 @@ or a ratio of medians cannot be calculated because one or both of the median est
 
 const acsVars = {
     DP02_0001E: 'Total_Households',
-    DP02_0061PE: 'High_School_Grad_(%)',
+    DP02_0061PE: 'High_School_Graduates_(%)',
     DP03_0062E: 'Median_Household_Income_($)',
     DP02_0064PE: 'Bachelors_Degree_(%)',
-    DP02_0065PE: 'Grad_Degree_(%)',
-    DP03_0009PE: 'Unemp_Rate_(%)',
+    DP02_0065PE: 'Graduate/Professional_Degree_(%)',
+    DP03_0009PE: 'Unemployment_Rate_(%)',
     DP03_0021PE: 'Commute_Public_Transport_(%)',
     DP04_0005PE: 'Rental_Vacancy_(%)',
     DP04_0004PE: 'Homeowner_Vacancy_(%)',
-    DP03_0025E: 'Mean_Travel_Time_Work_(Min.)',
-    DP04_0134E: 'Occupied_Units_Rent_Median_($)'
+    DP03_0025E: 'Mean_Travel_Time_To_Work_(Min.)',
+    DP04_0134E: 'Occupied_Units_Paying_Rent_(Median $)'
 };
 const tractParams = '&for=tract:*&in=state:15%20county:*';
 const key = '&key=ad57a888cd72bea7153fa37026fca3dc19eb0134';
@@ -96,6 +96,7 @@ class Visualization extends React.Component {
                 <StateMap
                     acsData={this.state.data}
                     selectedAcsVar={this.state.selectedAcsVar}
+                    vars={acsVars}
                 />
             </div>
         )

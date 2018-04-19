@@ -1,5 +1,6 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
+import './StateMap.css';
 import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import ComparisonTable from './ComparisonTable';
 
@@ -11,19 +12,23 @@ class StateMap extends React.Component {
         super(props);
         this.state = {
             hiData: {},
-            compareTracts: []
+            compareTracts: [],
+            legend: []
         }
         this.fillMapColor = this.fillMapColor.bind(this);
-        this.selectTractForComparison = this.selectTractForComparison.bind(this);
     }
     componentDidMount() {
         const acsData = this.props.acsData;
+        const acsVars = this.props.vars;
         const selectedAcsVar = this.props.selectedAcsVar.value;
         if (acsData.length) {
             higeojson.features.forEach((ct) => {
                 const match = acsData.findIndex(d => (d.tract === ct.properties.TRACTCE && d.county === ct.properties.COUNTYFP));
                 if (match > -1) {
-                    Object.keys(acsData[match]).forEach(k => acsData[match][k] = +acsData[match][k])
+                    Object.keys(acsData[match]).forEach((k) => {
+                        const missing = (+acsData[match][k] === -888888888 || +acsData[match][k] === -666666666 || +acsData[match][k] === -999999999) ? true : false;
+                        acsData[match][k] = missing ? 'N/A' : +acsData[match][k]
+                    })
                     Object.assign(ct.properties, acsData[match]);
                 }
             });
@@ -57,17 +62,12 @@ class StateMap extends React.Component {
                 });
                 const coordinates = e.lngLat;
                 const properties = e.features[0].properties;
+                let tooltipInfo = '';
+                Object.values(acsVars).forEach(v => tooltipInfo += v.replace(/_/g, ' ') + ': ' + properties[v].toLocaleString() + '<br>');
                 const tractName = '<b>' + properties.census_tra + ', ' + properties.census_t_1 + '</b>';
-                const bachelorsDeg = 'Bachelor\'s Degree: ' + properties['Bachelors_Degree_(%)'] + '%';
-                const publicTranspost = 'Commuting to Work (Public Transport): ' + properties['Commute_Public_Transport_(%)'] + '%';
-                const gradDegree = 'Graduate or Professional Degree: ' + properties['Grad_Degree_(%)'] + '%';
-                const highSchool = 'High School Graduate: ' + properties['High_School_Grad_(%)'] + '%';
-                const travelTime = 'Mean Travel Time to Work: ' + properties['Mean_Travel_Time_Work_(Min.)'];
-                const medianIncome = 'Median Household Income: ' + properties['Median_Household_Income_($)'];
-                const unempRate = 'Unemployment Rate: ' + properties['Unemp_Rate_(%)'] + '%';
                 if (features.length) {
                     popup.setLngLat(coordinates)
-                        .setHTML(tractName + '<br>' + medianIncome + '<br>' + unempRate + '<br>' + highSchool + '<br>' + bachelorsDeg + '<br>' + gradDegree + '<br>' + publicTranspost)
+                        .setHTML(tractName + '<br>' + tooltipInfo)
                         .addTo(this)
                 } else {
                     popup.remove();
@@ -76,12 +76,12 @@ class StateMap extends React.Component {
             this.map.on('mouseleave', 'census-tracts', () => {
                 popup.remove();
             });
-            /* this.map.on('click', 'census-tracts', function (e) {
-                console.log('click', e);
+            const compareTracts = this.state.compareTracts;
+            const selectTractForComparison = (e) => this.selectTractForComparison(e);
+            this.map.on('click', 'census-tracts', function (e) {
                 const tractProperties = e.features[0].properties;
-                this.selectTractForComparison(tractProperties);
-                console.log('state', this.state.compareTracts)
-            }); */
+                selectTractForComparison(tractProperties);
+            });
         }
     }
 
@@ -93,16 +93,19 @@ class StateMap extends React.Component {
     }
 
     getSelectedVarValues(selectedVar) {
-        return higeojson.features.map(ct => +ct.properties[selectedVar])
-            .filter(v => v !== -666666666 && v !== -888888888).sort((a, b) => { return a - b });
+        return higeojson.features.map(ct => ct.properties[selectedVar])
+            .filter(v => v !== 'N/A').sort((a, b) => { return a - b });
     }
 
     fillMapColor(values, selectedAcsVar) {
         // Calculate quintile stops
-        const stops = [0];
+        let stops = [0];
         for (let i = 1; i < 5; i++) {
             const perc = 0.2 * i;
             stops.push(values[Math.floor(values.length * perc)]);
+        }
+        if (!values.length) {
+            stops = [0, 0, 0, 0, 0];
         }
         this.map.setPaintProperty('census-tracts', 'fill-color', {
             property: selectedAcsVar,
@@ -114,24 +117,38 @@ class StateMap extends React.Component {
                 [stops[4], colors[4]]
             ]
         });
+        this.setState({
+            legend: [[stops[0], colors[0]],
+            [stops[1], colors[1]],
+            [stops[2], colors[2]],
+            [stops[3], colors[3]],
+            [stops[4], colors[4]]
+            ]
+        });
         this.map.setPaintProperty('census-tracts', 'fill-opacity', 0.7);
     }
 
     selectTractForComparison(selectedTract) {
-        const tracts = this.state.compareTracts;
-        if (tracts.length) {
-            const exist = tracts.findIndex(ct => (ct.COUNTYFP === selectedTract.COUNTYFP && ct.TRACTCE === selectedTract.TRACTCE));
-            if (exist > -1) {
-                tracts.splice(exist, 1);
-            }
-            if (exist === -1) {
+        let tracts = this.state.compareTracts;
+        const exist = tracts.findIndex(ct => (ct.COUNTYFP === selectedTract.COUNTYFP && ct.TRACTCE === selectedTract.TRACTCE));
+        if (exist > -1) {
+            tracts.splice(exist, 1);
+            this.setState({ compareTracts: tracts });
+            return;
+        }
+        if (exist === -1) {
+            if (tracts.length < 2) {
                 tracts.push(selectedTract);
+                this.setState({ compareTracts: tracts });
+                return;
+            }
+            if (tracts.length >= 2) {
+                tracts.splice(0, 1);
+                tracts.push(selectedTract);
+                this.setState({ compareTracts: tracts });
+                return;
             }
         }
-        if (!tracts.length) {
-            tracts.push(selectedTract);
-        }
-        this.setState({ compareTracts: tracts });
     }
 
     render() {
@@ -140,10 +157,25 @@ class StateMap extends React.Component {
             height: 500,
             width: '100%'
         };
+        const legend = this.state.legend;
+
         return (
             <div>
                 <div ref="hiMap" style={style} />
-                <ComparisonTable />
+                <div className='legend'>
+                    {legend.map((stop, index) => {
+                        return (
+                            <div>
+                                <span className='legend-color' style={{ backgroundColor: stop[1] }} />
+                                <span className='legend-value'>{`${stop[0].toLocaleString()}`}</span>
+                            </div>
+                        );
+                    })}
+                </div>
+                <ComparisonTable
+                    tracts={this.state.compareTracts}
+                    vars={this.props.vars}
+                />
             </div>
         );
     }

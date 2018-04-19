@@ -1,0 +1,14 @@
+.legend {
+    font-family: sans-serif;
+    position: absolute;
+    top: 200px;
+}
+
+.legend-color {
+    display: inline-block;
+    font-family: sans-serif;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+    width: 20px;
+}

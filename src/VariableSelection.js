@@ -14,19 +14,22 @@ class VariableSelection extends React.Component {
 
     render() {
         return (
-            <Select
-                name="acs-variable-select"
-                clearable={false}
-                searchable={false}
-                value={this.props.selectedAcsVar}
-                onChange={this.changeSelected}
-                options={
-                    Object.values(this.props.vars).map((v) => {
-                        return { value: v, label: v.replace(/_/g, ' ') }
-                    })
-                }
-            />
-        )
+            <div>
+                <h3>1. Select a variable</h3>
+                <Select
+                    name="acs-variable-select"
+                    clearable={false}
+                    searchable={false}
+                    value={this.props.selectedAcsVar}
+                    onChange={this.changeSelected}
+                    options={
+                        Object.values(this.props.vars).map((v) => {
+                            return { value: v, label: v.replace(/_/g, ' ') }
+                        })
+                    }
+                />
+            </div>
+        );
     }
 }
 

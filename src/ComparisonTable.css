@@ -1,0 +1,20 @@
+table {
+    margin: 0 auto;
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #F1F1F1;
+}
+
+th {
+    color: #1D667F;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.values {
+    text-align: right;
+}
