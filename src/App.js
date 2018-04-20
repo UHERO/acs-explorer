@@ -7,10 +7,9 @@ import Visualization from './Visualization';
 
 const App = () => {
   return (
-    <div className="App">
-      <Header />
+    <div id="app-container">
+      <Header id="app-header" />
       <div id="content-wrapper">
-        <div id="content">
           <div id="breadcrumb">
             <ol>
               <li className="first">
@@ -21,10 +20,9 @@ const App = () => {
           <div id="dashboard-title">
             <h4 id="dash-title">ACS Explorer</h4>
           </div>
-          <Visualization />
-        </div>
+          <Visualization id="vis" />
       </div>
-      <Footer />
+      <Footer id="app-footer" />
     </div>
   )
 }

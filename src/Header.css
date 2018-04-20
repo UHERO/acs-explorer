@@ -1,48 +1,35 @@
-#header{
+#header {
   background: url(./img/bg_header.png) repeat-x 0 0;
+  grid-column: 1 / span 3;
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: auto 1003px auto;
+  grid-template-areas: ". wrapper .";
 }
 
 .header-wrapper {
+  grid-area: wrapper;
   background: url(./img/bg_header_bottom.png) no-repeat 0 33px;
-  height: 116px;
-  margin: 0 auto;
-  padding: 4px 0 0 0 ;
-  position: relative;
-  width: 1003px;
+  grid-column: 2 / span 1;
+  display: grid;
+  grid-template-rows: 35px auto;
+  grid-template-columns: auto 400px;
+  grid-template-areas:
+    ". social"
+    "uhero search";
 }
-  
+
 #header form.mailing-list {
-  float: right;
-  padding: 0 4px 0 0;
-}
-  
-#header h1 {
-  float: left;
-  left: 5px;
-  position: absolute;
-  top: 57px;
-}
-  
-#header h1 a {
-  cursor: pointer;
-  display: block;
-  height: 36px;
-  overflow: hidden;
-  text-indent: -8000px;
-  width: 691px;
-}
-  
-#header form.mailing-list ul.topmenu {
-  display: block;
-  float: left;
+  grid-area: social;
+  grid-column: 2 / span 1;
+  align-self: center;
+  justify-self: end;
 }
   
 #header form.mailing-list ul.topmenu li {
   color: #1893B8;
-  float: left;
   font-size: 12px;
   list-style: none;
-  padding: 4px 2px 0 0;
 }
   
 #header form.mailing-list ul.topmenu .facebook {
@@ -52,44 +39,60 @@
   
 #header form.mailing-list ul.topmenu li a {
   color: #FFF;
-  margin: 0 2px;
+  font-family: "Georgia", "Arial", "Helvetica", sans-serif;
+  margin: 0 5px;
 }
   
-#header form.mailing-list fieldset label {
+#header form.mailing-list ul.topmenu li {
   color: #94D3E6;
-  display: block;
-  float: left;
-  padding: 6px 8px 0 0;
 }
-  
+
+#header form.mailing-list ul.topmenu li a.email {
+  color: #D67D1A;
+}
+
+
+#header h1 {
+  grid-area: uhero;
+  grid-column: 1 / span 1;
+  grid-row: 2 / span 1;
+  align-self: center;
+}
+
+#header h1 a {
+  cursor: pointer;
+  height: 36px;
+  /* width: 695px; */
+  display: block;
+  overflow: hidden;
+  color: transparent;
+}
+
 #header form.search {
-  float: right;
-  right: 2px;
-  position: absolute;
-  top: 61px;
+  grid-area: search;
+  grid-column: 2 / span 1;
+  grid-row: 2 / span 1;
+  align-self: center;
+  justify-self: end;
 }
   
 #header form.search fieldset input[type="text"] {
   background: url(./img/bg_search_text.png) no-repeat 0 0;
   border: none 0;
   color: #FFF;
-  display: block;
-  float: left;
   height: 24px;
   margin: 0 4px 0 0;
-  padding: 5px 0 0 13px;
   width: 196px;
+  padding: 5px 0 0 13px;
 }
   
 #header form.search fieldset input[type="submit"] {
   background: url(./img/button_search.png) no-repeat 0 0;
   border: none 0;
   cursor: pointer;
-  display: block;
-  float: left;
-  height: 29px;
+  height: 33px;
   line-height: 100%;
   overflow: hidden;
   text-indent:  -8000px;
-  width: 31px;
+  width: 33px;
 }

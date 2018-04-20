@@ -160,6 +160,7 @@ class StateMap extends React.Component {
         const style = {
             position: 'relative',
             height: 500,
+            marginBottom: '15px',
             width: '100%'
         };
         const legend = this.state.legend;
@@ -167,7 +168,7 @@ class StateMap extends React.Component {
         return (
             <div>
                 <div ref='hiMap' style={style} />
-                <div className='legend'>
+                {/* <div className='legend'>
                     {legend.map((stop, index) => {
                         return (
                             <div key={stop[0]}>
@@ -176,7 +177,7 @@ class StateMap extends React.Component {
                             </div>
                         );
                     })}
-                </div>
+                </div> */}
                 <ComparisonTable
                     tracts={this.state.compareTracts}
                     vars={this.props.vars}

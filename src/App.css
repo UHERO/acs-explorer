@@ -1,46 +1,59 @@
+#app-container {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 116px 1fr 260px;
+  grid-template-columns: auto 1003px auto;
+  grid-template-areas: 
+    "header header header"
+    ". content-wrapper ."
+    "footer footer footer";
+}
+
+#app-header {
+  grid-area: header;
+}
+
 #content-wrapper {
-  position: relative;
-  background: none;
+  grid-area: content-wrapper;
+  grid-column: 2 / span 1;
+  grid-row: 2 / span 1;
   background-color: #FFF;
-  margin: 0 auto;
-  width: 1003px;
+  display: grid;
+  grid-template-rows: 21px 75px 1fr;
+  grid-template-areas:
+    "breadcrumb"
+    "title"
+    "vis"
 }
 
-#content {
-  background: none;
-  width: 100%;
-  padding: 0 0 30px 0;
-}
-
-#content ol li {
-  line-height: 1.5;
-}
-
-#content div#breadcrumb {
+div#breadcrumb {
+  grid-area: breadcrumb;
+  grid-row: 1 / span 1;
   background: url(./img/bg_localizer.png) repeat-x 0 0;
   color: #BCBCBC;
   font-size: 11px;
   font-family: "Trebuchet MS", "Lucida Grande", Arial, sans-serif;
-  height: 21px;
-  padding: 5px 0 0 7px;
+  padding: 5px 7px;
 }
 
-#content div#breadcrumb a {
+div#breadcrumb a {
   color: #BCBCBC;
   text-decoration: none;
   text-transform: uppercase;
 }
 
-#content div#breadcrumb ol li {
+div#breadcrumb ol li {
   display: inline;
 }
 
 #dashboard-title {
+  grid-area: title;
+  grid-row: 2 / span 1;
   background-image: url('http://www.uhero.hawaii.edu/assets/Dasboardbranding2.png');
   background-position: 98% 0%;
   background-repeat: no-repeat;
   background-size: 15%;
-  padding: 40px 10px 15px;
+  padding: 15px 10px 15px;
 }
 
 #dash-title {
@@ -56,4 +69,12 @@
   font-family: verdana, sans-serif;
   font-size: 18pt;
   text-transform: uppercase;
+}
+
+#vis {
+  grid-area: vis;
+}
+
+#app-footer {
+  grid-area: footer;
 }
