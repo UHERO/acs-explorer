@@ -158,7 +158,7 @@ class StateMap extends React.Component {
 
     render() {
         const style = {
-            position: 'relative',
+            // position: 'relative',
             height: 500,
             marginBottom: '15px',
             width: '100%'
@@ -166,9 +166,9 @@ class StateMap extends React.Component {
         const legend = this.state.legend;
 
         return (
-            <div>
-                <div ref='hiMap' style={style} />
-                {/* <div className='legend'>
+            <div id='map-container'>
+                <div id='map' ref='hiMap' style={style} />
+                <div id='legend'>
                     {legend.map((stop, index) => {
                         return (
                             <div key={stop[0]}>
@@ -177,8 +177,9 @@ class StateMap extends React.Component {
                             </div>
                         );
                     })}
-                </div> */}
+                </div>
                 <ComparisonTable
+                    id='comparison-table'
                     tracts={this.state.compareTracts}
                     vars={this.props.vars}
                 />

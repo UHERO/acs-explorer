@@ -2,7 +2,8 @@ table {
     font-size: 12px;
     font-family: sans-serif;
     margin-bottom: 50px;
-    width: 100%;
+    grid-column: 1 / span 2;
+    grid-row: 2 / span 1;
 }
 
 th, td {
