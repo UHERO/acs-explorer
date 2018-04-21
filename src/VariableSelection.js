@@ -1,40 +1,48 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import './VariableSelection.css';
 
 class VariableSelection extends React.Component {
-    constructor(props) {
-        super(props);
-        this.changeSelected = this.changeSelected.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.changeSelected = this.changeSelected.bind(this);
+  }
 
-    changeSelected(selectedOption) {
-        this.props.onChangeSelected(selectedOption);
-    }
+  changeSelected(selectedOption) {
+    this.props.onChangeSelected(selectedOption);
+  }
 
-    render() {
-        return (
-            <div style={{ padding: '10px' }}>
-                <ul>
-                    <li>Select a variable from the dropdown to update the map.</li>
-                    <li>Click on up to 2 census tracts to generate a comparison table below.</li>
-                </ul>
-                <Select
-                    name='acs-variable-select'
-                    clearable={false}
-                    searchable={false}
-                    value={this.props.selectedAcsVar}
-                    onChange={this.changeSelected}
-                    options={
-                        Object.values(this.props.vars).map((v) => {
-                            return { value: v, label: v.replace(/_/g, ' ') }
-                        })
-                    }
-                />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div style={{ padding: '10px' }}>
+        <ul>
+          <li>Select a variable from the dropdown to update the map.</li>
+          <li>
+            Click on up to 2 census tracts to generate a comparison table below.
+          </li>
+        </ul>
+        <Select
+          name="acs-variable-select"
+          clearable={false}
+          searchable={false}
+          value={this.props.selectedAcsVar}
+          onChange={this.changeSelected}
+          options={Object.values(this.props.vars).map(v => ({
+            value: v,
+            label: v.replace(/_/g, ' '),
+          }))}
+        />
+      </div>
+    );
+  }
 }
 
-export default VariableSelection
+VariableSelection.propTypes = {
+  onChangeSelected: PropTypes.func.isRequired,
+  selectedAcsVar: PropTypes.object.isRequired,
+  vars: PropTypes.object.isRequired,
+};
+
+export default VariableSelection;

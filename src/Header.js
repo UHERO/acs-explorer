@@ -21,7 +21,10 @@ const Header = () => (
                 Become a Sponsor
               </a>
               |
-              <a className="email" href="http://www.uhero.hawaii.edu/31/contact">
+              <a
+                className="email"
+                href="http://www.uhero.hawaii.edu/31/contact"
+              >
                 Join Mailing List
               </a>
             </li>
