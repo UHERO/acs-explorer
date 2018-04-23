@@ -49,7 +49,7 @@ class Visualization extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {},
+      data: [],
       loading: false,
       error: null,
       selectedAcsVar: {
@@ -85,7 +85,11 @@ class Visualization extends React.Component {
         });
         this.setState({ data: formattedCensusData, loading: false });
       })
-      .catch(error => this.setState({ error, loading: false }));
+      .catch(error => {
+        if (error && this.refs.vis) {
+          this.setState({ error, loading: false });
+        }
+      });
   }
 
   handleAcsVarChange(acsVar) {
@@ -95,12 +99,13 @@ class Visualization extends React.Component {
   render() {
     if (this.state.error) {
       console.log('error', this.state.error);
+      return <p>An error has occurred.</p>
     }
     if (this.state.loading) {
-      return <p>Loading..</p>;
+      return <p>Loading...</p>;
     }
     return (
-      <div>
+      <div ref="vis">
         <VariableSelection
           vars={acsVars}
           selectedAcsVar={this.state.selectedAcsVar}

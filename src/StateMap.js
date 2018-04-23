@@ -122,24 +122,13 @@ class StateMap extends React.Component {
     if (!values.length) {
       stops = [0, 0, 0, 0, 0];
     }
+    const fill = stops.map((stop, index) => { return [stop, colors[index]]; }); 
     this.map.setPaintProperty('census-tracts', 'fill-color', {
       property: selectedAcsVar,
-      stops: [
-        [stops[0], colors[0]],
-        [stops[1], colors[1]],
-        [stops[2], colors[2]],
-        [stops[3], colors[3]],
-        [stops[4], colors[4]],
-      ],
+      stops: fill,
     });
     this.setState({
-      legend: [
-        [stops[0], colors[0]],
-        [stops[1], colors[1]],
-        [stops[2], colors[2]],
-        [stops[3], colors[3]],
-        [stops[4], colors[4]],
-      ],
+      legend: fill,
     });
     this.map.setPaintProperty('census-tracts', 'fill-opacity', 0.7);
   }
