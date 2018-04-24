@@ -2,6 +2,7 @@
   "name": "acs-explorer",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://www.uhero.hawaii.edu/static/dashboard/acs-explorer",
   "dependencies": {
     "d3": "^5.0.0",
     "d3-scale": "^2.0.0",

@@ -115,6 +115,7 @@ class StateMap extends React.Component {
   fillMapColor(values, selectedAcsVar) {
     // Calculate quintile stops
     let stops = [0];
+    console.log('stops', stops)
     for (let i = 1; i < 5; i++) {
       const perc = 0.2 * i;
       stops.push(values[Math.floor(values.length * perc)]);
@@ -169,8 +170,8 @@ class StateMap extends React.Component {
       <div id="map-container">
         <div id="map" style={style} />
         <div id="legend">
-          {legend.map(stop => (
-            <div key={stop[0]}>
+          {legend.map((stop, index) => (
+            <div key={index}>
               <span
                 className="legend-color"
                 style={{ backgroundColor: stop[1] }}

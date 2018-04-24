@@ -4,12 +4,14 @@ table {
     margin-bottom: 50px;
     grid-column: 1 / span 2;
     grid-row: 2 / span 1;
+    width: 100%;
 }
 
 th, td {
     padding: 10px;
     border-bottom: 1px solid #F1F1F1;
     font-size: 1.1em;
+    vertical-align: middle;
 }
 
 th {
