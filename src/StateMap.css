@@ -1,6 +1,6 @@
 #map-container {
     display: grid;
-    grid-template-rows: 500px auto;
+    grid-template-rows: 500px 550px auto;
     grid-template-areas:
         'legend'
         'map'
