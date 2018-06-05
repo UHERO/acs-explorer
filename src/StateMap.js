@@ -15,6 +15,7 @@ class StateMap extends React.Component {
     this.state = {
       hiData: [],
       compareTracts: [],
+      selectedGeojson: [],
       legend: [],
     };
     this.fillMapColor = this.fillMapColor.bind(this);
@@ -80,7 +81,7 @@ class StateMap extends React.Component {
         Object.values(acsVars).forEach(
           v => { tooltipInfo += `${v.replace(/_/g, ' ')}: ${properties[v].toLocaleString()}<br>`; }
         );
-        const tractName = `<b style="font-weight:bold;">${ properties.census_tra }, ${ properties.census_t_1 }</b>`;
+        const tractName = `<b style="font-weight:bold;">${properties.census_tra}, ${properties.census_t_1}</b>`;
         if (features.length) {
           popup
             .setLngLat(coordinates)
@@ -93,8 +94,12 @@ class StateMap extends React.Component {
       this.map.on('mouseleave', 'census-tracts', () => {
         popup.remove();
       });
-      const selectTractForComparison = e => this.selectTractForComparison(e);
-      this.map.on('click', 'census-tracts', e => selectTractForComparison(e.features[0].properties));
+      const selectTractForComparison = e => this.selectTractForComparison(e, this.map);
+      const highlightSelectedTracts = e => this.highlightSelectedTracts(this.map);
+      this.map.on('click', 'census-tracts', (e) => {
+        selectTractForComparison(e.features[0], this.map);
+        highlightSelectedTracts(this.map)
+      });
     }
   }
 
@@ -122,7 +127,7 @@ class StateMap extends React.Component {
     if (!values.length) {
       stops = [0, 0, 0, 0, 0];
     }
-    const fill = stops.map((stop, index) => { return [stop, colors[index]]; }); 
+    const fill = stops.map((stop, index) => { return [stop, colors[index]]; });
     this.map.setPaintProperty('census-tracts', 'fill-color', {
       property: selectedAcsVar,
       stops: fill,
@@ -133,26 +138,59 @@ class StateMap extends React.Component {
     this.map.setPaintProperty('census-tracts', 'fill-opacity', 0.7);
   }
 
-  selectTractForComparison(selectedTract) {
+  highlightSelectedTracts(map) {
+    const state = this.state;
+    if (typeof this.map.getLayer('selectedTracts') !== 'undefined') {
+      this.map.getSource('selectedTracts').setData({
+        type: 'FeatureCollection',
+        features: state.selectedGeojson
+      });
+      return;
+    }
+
+    map.addSource('selectedTracts', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: state.selectedGeojson
+      }
+    });
+    map.addLayer({
+      id: 'selectedTracts',
+      source: 'selectedTracts',
+      type: 'line',
+      paint: {
+        'line-color': '#fff',
+        'line-width': 1
+      }
+    });
+  }
+
+  selectTractForComparison(selectedTract, map) {
     const tracts = this.state.compareTracts;
-    const countyFP = selectedTract.COUNTYFP;
-    const tractce = selectedTract.TRACTCE;
+    const geo = this.state.selectedGeojson;
+    const countyFP = selectedTract.properties.COUNTYFP;
+    const tractce = selectedTract.properties.TRACTCE;
     const exist = tracts.findIndex(ct => ct.COUNTYFP === countyFP && ct.TRACTCE === tractce);
     if (exist > -1) {
       tracts.splice(exist, 1);
-      this.setState({ compareTracts: tracts });
+      geo.splice(exist, 1);
+      this.setState({ compareTracts: tracts, selectedGeojson: geo });
       return;
     }
     if (exist === -1) {
       if (tracts.length < 2) {
-        tracts.push(selectedTract);
-        this.setState({ compareTracts: tracts });
+        tracts.push(selectedTract.properties);
+        geo.push(selectedTract);
+        this.setState({ compareTracts: tracts, selectedGeojson: geo });
         return;
       }
       if (tracts.length >= 2) {
         tracts.splice(0, 1);
-        tracts.push(selectedTract);
-        this.setState({ compareTracts: tracts });
+        geo.splice(0, 1);
+        tracts.push(selectedTract.properties);
+        geo.push(selectedTract);
+        this.setState({ compareTracts: tracts, selectedGeojson: geo });
       }
     }
   }
