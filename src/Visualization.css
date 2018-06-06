@@ -5,6 +5,7 @@
         'legend'
         'map'
         'comparison-table';
+    margin: 40px;
 }
 
 #map {

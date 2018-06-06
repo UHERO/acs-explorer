@@ -1,124 +1,236 @@
 import React from 'react';
-import StateMap from './StateMap';
-import VariableSelection from './VariableSelection';
+import mapboxgl from 'mapbox-gl';
+import PropTypes from 'prop-types';
+import './Visualization.css';
+import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
+import ComparisonTable from './ComparisonTable';
 
-const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
-/* Variables from ACS 5-Year Data Profile API:
-DP02_0001E: Estimate: HOUSEHOLDS BY TYPE Total households
-DP02_0061PE: Percent: EDUCATIONAL ATTAINMENT Population 25 years and over -
-    High school graduate (includes equivalency)
-DP03_0062E: Estimate: INCOME AND BENEFITS (IN 2016 INFLATION-ADJUSTED DOLLARS)
-    Total households - Median household income (dollars)
-DP02_0064PE: Percent: EDUCATIONAL ATTAINMENT Population 25 years and over -
-    Bachelor's degree
-DP02_0065PE: Percent: EDUCATIONAL ATTAINMENT Population 25 years and over -
-    Graduate or professional degree
-DP03_0009PE: Percent: EMPLOYMENT STATUS Civilian labor force - Unemployment Rate
-DP03_0021PE: Percent: COMMUTING TO WORK Workers 16 years and over -
-    Public transportation (excluding taxicab)
-DP04_0005PE: Percent: HOUSING OCCUPANCY Rental vacancy rate
-DP04_0004PE: Percent: HOUSING OCCUPANCY Homeowner vacancy rate
-DP03_0025E: Estimate: COMMUTING TO WORK Mean travel time to work (minutes)
-DP04_0134E: Estimate: GROSS RENT Occupied units paying rent - Median (dollars)
+mapboxgl.accessToken =
+  'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
 
--888888888: the estimate is not applicable or not available
--666666666: indicates that either no sample observations or
-too few sample observations were available to compute an estimate,
-or a ratio of medians cannot be calculated because one or
-both of the median estimates falls in the lowest interval or
-upper interval of an open-ended distribution.
-*/
-
-const acsVars = {
-  DP02_0001E: 'Total_Households',
-  DP02_0061PE: 'High_School_Graduates_(%)',
-  DP03_0062E: 'Median_Household_Income_($)',
-  DP02_0064PE: 'Bachelors_Degree_(%)',
-  DP02_0065PE: 'Graduate/Professional_Degree_(%)',
-  DP03_0009PE: 'Unemployment_Rate_(%)',
-  DP03_0021PE: 'Commute_Public_Transport_(%)',
-  DP04_0005PE: 'Rental_Vacancy_(%)',
-  DP04_0004PE: 'Homeowner_Vacancy_(%)',
-  DP03_0025E: 'Mean_Travel_Time_To_Work_(Min.)',
-  DP04_0134E: 'Occupied_Units_Paying_Rent_(Median $)',
-};
-const tractParams = '&for=tract:*&in=state:15%20county:*';
-const key = '&key=ad57a888cd72bea7153fa37026fca3dc19eb0134';
-
+const colors = ['#EFF3FF', '#BDD7E7', '#6BAED6', '#3182BD', '#08519C'];
 class Visualization extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      loading: false,
-      error: null,
-      selectedAcsVar: {
-        value: 'Median_Household_Income_($)',
-        label: 'Median Household Income ($)',
-      },
+      hiData: [],
+      compareTracts: [],
+      legend: [],
     };
-    this.handleAcsVarChange = this.handleAcsVarChange.bind(this);
+    this.fillMapColor = this.fillMapColor.bind(this);
   }
-
   componentDidMount() {
-    this.setState({ loading: true });
-    fetch(baseURL + Object.keys(acsVars).join() + tractParams + key)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Error fetching data');
-      })
-      .then(data => {
-        data[0].forEach(
-          (label, index) =>
-            (acsVars[label]
-              ? (data[0][index] = acsVars[label])
-              : (data[0][index] = data[0][index])
-            ));
-        const formattedCensusData = data.map(row => {
-          const obj = {};
-          data[0].forEach((id, index) => {
-            obj[id] = row[index];
-          });
-          return obj;
+    const { acsData, acsVars, selectedAcsVar } = this.props;
+    if (acsData.length) {
+      higeojson.features.forEach(ct => {
+        // Join ACS data with GeoJSON
+        this.addAcsToGeoJson(ct, acsData);
+      });
+      this.setState({ hiData: higeojson });
+      const values = this.getSelectedVarValues(selectedAcsVar);
+      this.map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v9',
+        center: [-157.9174, 20.2893],
+        zoom: 6,
+      });
+      this.map.addControl(new mapboxgl.NavigationControl());
+      this.map.on('load', () => {
+        this.addCensusTractLayer(this.map);
+        this.fillMapColor(values, selectedAcsVar);
+      });
+      const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+      });
+      this.map.on('mousemove', 'census-tracts', function (e) {
+        const features = this.queryRenderedFeatures(e.point, {
+          layers: ['census-tracts'],
         });
-        this.setState({ data: formattedCensusData, loading: false });
-      })
-      .catch(error => {
-        if (error && this.refs.vis) {
-          this.setState({ error, loading: false });
+        const coordinates = e.lngLat;
+        const { properties } = e.features[0];
+        let tooltipInfo = '';
+        Object.values(acsVars).forEach(
+          v => { tooltipInfo += `${v.replace(/_/g, ' ')}: ${properties[v].toLocaleString()}<br>`; }
+        );
+        const tractName = `<b style="font-weight:bold;">${properties.census_tra}, ${properties.census_t_1}</b>`;
+        if (features.length) {
+          popup
+            .setLngLat(coordinates)
+            .setHTML(`${tractName}<br>${tooltipInfo}`)
+            .addTo(this);
+        } else {
+          popup.remove();
         }
       });
+      this.map.on('mouseleave', 'census-tracts', () => {
+        popup.remove();
+      });
+      const selectTractForComparison = e => this.selectTractForComparison(e, this.map, this.state.compareTracts);
+      const highlightSelectedTracts = () => this.highlightSelectedTracts(this.map, this.state.compareTracts);
+      this.map.on('click', 'census-tracts', (e) => {
+        selectTractForComparison(e.features[0], this.map, this.state.compareTracts);
+        highlightSelectedTracts(this.map, this.state.compareTracts);
+      });
+    }
   }
 
-  handleAcsVarChange(acsVar) {
-    this.setState({ selectedAcsVar: acsVar });
+  componentWillReceiveProps(nextProps) {
+    if (this.state.hiData.features) {
+      const values = this.getSelectedVarValues(nextProps.selectedAcsVar);
+      this.fillMapColor(values, nextProps.selectedAcsVar);
+    }
+  }
+
+  addCensusTractLayer(map) {
+    // Find layer with place names
+    const layers = map.getStyle().layers;
+    const symbolLayer = layers.find(l => l.type === 'symbol').id;
+    map.addSource('tracts', {
+      type: 'geojson',
+      data: higeojson,
+    });
+    map.addLayer(
+      {
+        id: 'census-tracts',
+        type: 'fill',
+        source: 'tracts',
+      },
+      // Add symbolLayer after census-tracts, so labels are placed above fill layer
+      symbolLayer,
+    );
+  }
+
+  addAcsToGeoJson(ct, acsData) {
+    const tractce = ct.properties.TRACTCE;
+    const countyFP = ct.properties.COUNTYFP;
+    const match = acsData.findIndex(d => d.tract === tractce && d.county === countyFP);
+    if (match > -1) {
+      Object.keys(acsData[match]).forEach(k => {
+        const missing = !!(
+          +acsData[match][k] === -888888888 ||
+          +acsData[match][k] === -666666666 ||
+          +acsData[match][k] === -999999999
+        );
+        acsData[match][k] = missing ? 'N/A' : +acsData[match][k];
+      });
+      Object.assign(ct.properties, acsData[match]);
+    }
+  }
+
+  getSelectedVarValues(selectedVar) {
+    return higeojson.features
+      .map(ct => ct.properties[selectedVar])
+      .filter(v => v !== 'N/A')
+      .sort((a, b) => a - b);
+  }
+
+  fillMapColor(values, selectedAcsVar) {
+    // Calculate quintile stops
+    let stops = [0];
+    for (let i = 1; i < 5; i++) {
+      const perc = 0.2 * i;
+      stops.push(values[Math.floor(values.length * perc)]);
+    }
+    if (!values.length) {
+      stops = [0, 0, 0, 0, 0];
+    }
+    const fill = stops.map((stop, index) => { return [stop, colors[index]]; });
+    this.map.setPaintProperty('census-tracts', 'fill-color', {
+      property: selectedAcsVar,
+      stops: fill,
+    });
+    this.setState({
+      legend: fill,
+    });
+    this.map.setPaintProperty('census-tracts', 'fill-opacity', 0.7);
+  }
+
+  highlightSelectedTracts(map, compareTracts) {
+    if (typeof this.map.getLayer('selectedTracts') !== 'undefined') {
+      this.map.getSource('selectedTracts').setData({
+        type: 'FeatureCollection',
+        features: compareTracts
+      });
+      return;
+    }
+    map.addSource('selectedTracts', {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: compareTracts
+      }
+    });
+    map.addLayer({
+      id: 'selectedTracts',
+      source: 'selectedTracts',
+      type: 'line',
+      paint: {
+        'line-color': '#FFF',
+        'line-width': 2
+      }
+    });
+  }
+
+  selectTractForComparison(selectedTract, map, compareTracts) {
+    const tracts = compareTracts;
+    const countyFP = selectedTract.properties.COUNTYFP;
+    const tractce = selectedTract.properties.TRACTCE;
+    const exist = tracts.findIndex(ct => ct.properties.COUNTYFP === countyFP && ct.properties.TRACTCE === tractce);
+    if (exist > -1) {
+      tracts.splice(exist, 1);
+      this.setState({ compareTracts: tracts });
+      return;
+    }
+    if (exist === -1 && tracts.length < 2) {
+      tracts.push(selectedTract);
+      this.setState({ compareTracts: tracts });
+      return;
+    }
+    if (exist === -1 && tracts.length >= 2) {
+      tracts.splice(0, 1);
+      tracts.push(selectedTract);
+      this.setState({ compareTracts: tracts });
+      return;
+    }
   }
 
   render() {
-    if (this.state.error) {
-      console.log('error', this.state.error);
-      return <p>An error has occurred.</p>
-    }
-    if (this.state.loading) {
-      return <p>Loading...</p>;
-    }
+    const style = {
+      height: 500,
+      marginBottom: '15px',
+      width: '100%',
+    };
+    const { legend } = this.state;
+
     return (
-      <div ref="vis">
-        <VariableSelection
-          vars={acsVars}
-          selectedAcsVar={this.state.selectedAcsVar}
-          onChangeSelected={this.handleAcsVarChange}
-        />
-        <StateMap
-          acsData={this.state.data}
-          acsVars={acsVars}
-          selectedAcsVar={this.state.selectedAcsVar.value}
+      <div id="map-container">
+        <div id="map" style={style} />
+        <div id="legend">
+          {legend.map((stop, index) => (
+            <div key={index}>
+              <span
+                className="legend-color"
+                style={{ backgroundColor: stop[1] }}
+              />
+              <span className="legend-value">{`${stop[0].toLocaleString()}`}</span>
+            </div>
+          ))}
+        </div>
+        <ComparisonTable
+          id="comparison-table"
+          tracts={this.state.compareTracts}
+          vars={this.props.acsVars}
         />
       </div>
     );
   }
 }
+
+Visualization.propTypes = {
+  acsData: PropTypes.any.isRequired,
+  acsVars: PropTypes.object.isRequired,
+  selectedAcsVar: PropTypes.string.isRequired,
+};
 
 export default Visualization;

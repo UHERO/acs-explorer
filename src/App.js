@@ -3,7 +3,7 @@ import './App.css';
 
 import Header from './Header';
 import Footer from './Footer';
-import Visualization from './Visualization';
+import AcsExplorer from './AcsExplorer';
 
 const App = () => (
   <div id="app-container">
@@ -17,9 +17,9 @@ const App = () => (
         </ol>
       </div>
       <div id="dashboard-title">
-        <h4 id="dash-title">ACS Explorer</h4>
+        <h4 id="dash-title">2016 ACS Explorer</h4>
       </div>
-      <Visualization id="vis" />
+      <AcsExplorer id="acs" />
     </div>
     <Footer id="app-footer" />
   </div>

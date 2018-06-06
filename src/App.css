@@ -23,7 +23,7 @@
   grid-template-areas:
     "breadcrumb"
     "title"
-    "vis"
+    "acs"
 }
 
 div#breadcrumb {
@@ -71,8 +71,8 @@ div#breadcrumb ol li {
   text-transform: uppercase;
 }
 
-#vis {
-  grid-area: vis;
+#acs {
+  grid-area: acs;
 }
 
 #app-footer {

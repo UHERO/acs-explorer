@@ -13,8 +13,8 @@ const ComparisonTable = props => {
           <tr>
             <th>&nbsp;</th>
             {tracts.map(ct => (
-              <th key={ct.TRACTCE}>
-                {ct.census_tra}, {ct.census_t_1} County
+              <th key={ct.properties.TRACTCE}>
+                {ct.properties.census_tra}, {ct.properties.census_t_1} County
               </th>
             ))}
           </tr>
@@ -24,8 +24,8 @@ const ComparisonTable = props => {
             <tr key={v}>
               <td>{v.replace(/_/g, ' ')}</td>
               {tracts.map(ct => (
-                <td key={v + ct.TRACTCE} className="values">
-                  {ct[v].toLocaleString()}
+                <td key={v + ct.properties.TRACTCE} className="values">
+                  {ct.properties[v].toLocaleString()}
                 </td>
               ))}
             </tr>
