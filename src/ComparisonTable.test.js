@@ -38,7 +38,7 @@ describe('ComparisonTable', () => {
 
     describe('when tracts are received', () => {
         beforeEach(() => {
-            props.tracts = [{ TRACTCE: 'test' }];
+            props.tracts = [{ properties: { TRACTCE: 'test' } }];
         });
         
         it('renders a table', () => {

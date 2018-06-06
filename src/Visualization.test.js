@@ -1,9 +1,8 @@
 import React from 'react';
-import Enzyme, { mount, shallow } from 'enzyme';
+import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import Visualization from './Visualization';
-import VariableSelection from './VariableSelection';
-import StateMap from './StateMap';
+import ComparisonTable from './ComparisonTable';
 
 Enzyme.configure({ adapter: new Adapter() });
 jest.mock('mapbox-gl/dist/mapbox-gl', () => ({
@@ -11,46 +10,54 @@ jest.mock('mapbox-gl/dist/mapbox-gl', () => ({
 }));
 
 describe('Visualization', () => {
-    describe('when component starts loading', () => {
-        it('renders a loading message', () => {
-            const visComponent = shallow(<Visualization />);
-            visComponent.setState({ loading: true });
-            expect(visComponent.find('p').length).toBe(1);
+    let props;
+    let mountedVisualization;
+    const visualization = () => {
+        if (!mountedVisualization) {
+            mountedVisualization = mount(
+                <Visualization {...props} />
+            );
+        }
+        return mountedVisualization;
+    }
+
+    beforeEach(() => {
+        props = {
+            acsData: [],
+            acsVars: {},
+            selectedAcsVar: '',
+        };
+        mountedVisualization = undefined
+    });
+
+    it('always renders a map-container div', () => {
+        const divs = visualization().find('div');
+        expect(divs.length).toBeGreaterThan(0);
+    });
+
+    describe('the rendered container', () => {
+        it ('contains the map, legend, and table', () => {
+           const container = visualization().first('div');
+           expect(container.children()).toEqual(visualization().children());
         });
     });
 
-    describe('when an error occurs while fetching data from ACS', () => {
-        it('renders an error message', () => {
-            const visComponent = shallow(<Visualization />);
-            visComponent.setState({ loading: false, error: true });
-            expect(visComponent.find('p').length).toBe(1);
-        });
+    it('awalys renders a map', () => {
+        expect(visualization().find('#map').length).toBe(1);
+    });
+    
+    it('always renders a legend', () => {
+        expect(visualization().find('#legend').length).toBe(1);
     });
 
-    describe('when fetching data from ACS is successful', () => {
-        it('renders a vis container div', () => {
-            const visComponent = shallow(<Visualization />);
-            visComponent.setState({ loading: false, error: false, data: [{ TRACTCE: 'test' }] });
-            const div = visComponent.find('div');
-            expect(div.length).toBe(1);
+    it('always renders a ComparisonTable component', () => {
+        expect(visualization().find('#comparison-table').length).toBe(1);
+    });
 
-            describe('the rendered div contains VariableSelection and StateMap components', () => {
-                expect(div.children()).toEqual(visComponent.children());
-
-                describe('rendered VariableSelection', () => {
-                    it('receives 3 props', () => {
-                        const varSelection = visComponent.find(VariableSelection);
-                        expect(Object.keys(varSelection.props()).length).toBe(3);
-                    });
-                });
-
-                describe('rendered StateMap', () => {
-                    it('receives 3 props', () => {
-                        const stateMap = visComponent.find(StateMap);
-                        expect(Object.keys(stateMap.props()).length).toBe(3);
-                    });
-                });
-            });
+    describe('rendered ComparisonTable', () => {
+        it('receives 3 props', () => {
+            const comparisonTable = visualization().find(ComparisonTable);
+            expect(Object.keys(comparisonTable.props()).length).toBe(3);
         });
     });
 });
