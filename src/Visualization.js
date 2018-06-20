@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import './Visualization.css';
 import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import ComparisonTable from './ComparisonTable';
+import Heatmap from './Heatmap';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
@@ -217,6 +218,11 @@ class Visualization extends React.Component {
             </div>
           ))}
         </div>
+        <Heatmap
+          id="heatmap"
+          data={this.state.hiData}
+          selectedVar={this.props.selectedAcsVar}
+        />
         <ComparisonTable
           id="comparison-table"
           tracts={this.state.compareTracts}
