@@ -1,9 +1,9 @@
 table {
     font-size: 12px;
     font-family: sans-serif;
-    margin-bottom: 50px;
+    margin-bottom: 10px;
     grid-column: 1 / span 2;
-    grid-row: 2 / span 1;
+    grid-row: 3 / span 1;
     width: 100%;
 }
 

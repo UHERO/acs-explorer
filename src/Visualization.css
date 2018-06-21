@@ -1,9 +1,11 @@
 #map-container {
     display: grid;
-    grid-template-rows: 500px 550px auto;
+    grid-template-rows: 500px 350px 550px;
+    grid-template-columns: auto 150px;
     grid-template-areas:
         'legend'
         'map'
+        'bubblechart' 'heatmap'
         'comparison-table';
     margin: 40px;
 }
@@ -18,7 +20,7 @@
     grid-area: legend;
     font-family: sans-serif;
     grid-column: 1 / span 1;
-    grid-row: 1 /span 1;
+    grid-row: 1 / span 1;
     justify-self: start;
     align-self: start;
     z-index: 2;
@@ -42,4 +44,16 @@
 
 #comparison-table {
     grid-area: comparison-table;
+}
+
+#bubblechart {
+    grid-area: bubblechart;
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+}
+
+#heatmap {
+    grid-area: heatmap;
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 1;
 }

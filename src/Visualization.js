@@ -5,6 +5,7 @@ import './Visualization.css';
 import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import ComparisonTable from './ComparisonTable';
 import Heatmap from './Heatmap';
+import Bubblechart from './Bubblechart';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
@@ -218,6 +219,10 @@ class Visualization extends React.Component {
             </div>
           ))}
         </div>
+        <Bubblechart
+          id="bubblechart"
+          data={this.state.hiData}
+        />
         <Heatmap
           id="heatmap"
           data={this.state.hiData}
