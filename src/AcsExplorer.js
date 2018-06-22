@@ -1,6 +1,7 @@
 import React from 'react';
 import Visualization from './Visualization';
 import VariableSelection from './VariableSelection';
+import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 
 const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
 /* Variables from ACS 5-Year Data Profile API:
@@ -49,7 +50,7 @@ class AcsExplorer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      hiJson: {},
       loading: false,
       error: null,
       selectedAcsVar: {
@@ -83,13 +84,34 @@ class AcsExplorer extends React.Component {
           });
           return obj;
         });
-        this.setState({ data: formattedCensusData, loading: false });
+        higeojson.features.forEach(ct => {
+          // Join ACS data with GeoJSON
+          this.addAcsToGeoJson(ct, formattedCensusData);
+        });
+        this.setState({ hiJson: higeojson, loading: false });
       })
       .catch(error => {
         if (error && this.refs.vis) {
           this.setState({ error, loading: false });
         }
       });
+  }
+
+  addAcsToGeoJson(ct, acsData) {
+    const tractce = ct.properties.TRACTCE;
+    const countyFP = ct.properties.COUNTYFP;
+    const match = acsData.findIndex(d => d.tract === tractce && d.county === countyFP);
+    if (match > -1) {
+      Object.keys(acsData[match]).forEach(k => {
+        const missing = !!(
+          +acsData[match][k] === -888888888 ||
+          +acsData[match][k] === -666666666 ||
+          +acsData[match][k] === -999999999
+        );
+        acsData[match][k] = missing ? 'N/A' : +acsData[match][k];
+      });
+      Object.assign(ct.properties, acsData[match]);
+    }
   }
 
   handleAcsVarChange(acsVar) {
@@ -112,7 +134,7 @@ class AcsExplorer extends React.Component {
           onChangeSelected={this.handleAcsVarChange}
         />
         <Visualization
-          acsData={this.state.data}
+          hiGeoJson={this.state.hiJson}
           acsVars={acsVars}
           selectedAcsVar={this.state.selectedAcsVar.value}
         />

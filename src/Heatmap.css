@@ -1,0 +1,11 @@
+.d3tooltip {
+    background-color: #E4E4E4;
+    position: relative;
+    opacity: 0;
+    width: 120px;
+    padding: 5px;
+}
+
+b {
+    font-weight: bold;
+}

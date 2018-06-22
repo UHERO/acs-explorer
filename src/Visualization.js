@@ -2,7 +2,6 @@ import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import './Visualization.css';
-import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import ComparisonTable from './ComparisonTable';
 import Heatmap from './Heatmap';
 import Bubblechart from './Bubblechart';
@@ -15,21 +14,15 @@ class Visualization extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hiData: [],
       compareTracts: [],
       legend: [],
     };
     this.fillMapColor = this.fillMapColor.bind(this);
   }
   componentDidMount() {
-    const { acsData, acsVars, selectedAcsVar } = this.props;
-    if (acsData.length) {
-      higeojson.features.forEach(ct => {
-        // Join ACS data with GeoJSON
-        this.addAcsToGeoJson(ct, acsData);
-      });
-      this.setState({ hiData: higeojson });
-      const values = this.getSelectedVarValues(selectedAcsVar);
+    const { hiGeoJson, acsVars, selectedAcsVar } = this.props;
+    if (hiGeoJson.features) {
+      const values = this.getSelectedVarValues(selectedAcsVar, hiGeoJson);
       this.map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
@@ -38,7 +31,7 @@ class Visualization extends React.Component {
       });
       this.map.addControl(new mapboxgl.NavigationControl());
       this.map.on('load', () => {
-        this.addCensusTractLayer(this.map);
+        this.addCensusTractLayer(this.map, hiGeoJson);
         this.fillMapColor(values, selectedAcsVar);
       });
       const popup = new mapboxgl.Popup({
@@ -78,19 +71,19 @@ class Visualization extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.hiData.features) {
-      const values = this.getSelectedVarValues(nextProps.selectedAcsVar);
+    if (this.props.hiGeoJson.features) {
+      const values = this.getSelectedVarValues(nextProps.selectedAcsVar, nextProps.hiGeoJson);
       this.fillMapColor(values, nextProps.selectedAcsVar);
     }
   }
 
-  addCensusTractLayer(map) {
+  addCensusTractLayer(map, geoJson) {
     // Find layer with place names
     const layers = map.getStyle().layers;
     const symbolLayer = layers.find(l => l.type === 'symbol').id;
     map.addSource('tracts', {
       type: 'geojson',
-      data: higeojson,
+      data: geoJson,
     });
     map.addLayer(
       {
@@ -103,25 +96,8 @@ class Visualization extends React.Component {
     );
   }
 
-  addAcsToGeoJson(ct, acsData) {
-    const tractce = ct.properties.TRACTCE;
-    const countyFP = ct.properties.COUNTYFP;
-    const match = acsData.findIndex(d => d.tract === tractce && d.county === countyFP);
-    if (match > -1) {
-      Object.keys(acsData[match]).forEach(k => {
-        const missing = !!(
-          +acsData[match][k] === -888888888 ||
-          +acsData[match][k] === -666666666 ||
-          +acsData[match][k] === -999999999
-        );
-        acsData[match][k] = missing ? 'N/A' : +acsData[match][k];
-      });
-      Object.assign(ct.properties, acsData[match]);
-    }
-  }
-
-  getSelectedVarValues(selectedVar) {
-    return higeojson.features
+  getSelectedVarValues(selectedVar, geoJson) {
+    return geoJson.features
       .map(ct => ct.properties[selectedVar])
       .filter(v => v !== 'N/A')
       .sort((a, b) => a - b);
@@ -168,7 +144,7 @@ class Visualization extends React.Component {
       source: 'selectedTracts',
       type: 'line',
       paint: {
-        'line-color': '#FFF',
+        'line-color': '#F6A01B',
         'line-width': 2
       }
     });
@@ -221,11 +197,11 @@ class Visualization extends React.Component {
         </div>
         <Bubblechart
           id="bubblechart"
-          data={this.state.hiData}
+          data={this.props.hiGeoJson}
         />
         <Heatmap
           id="heatmap"
-          data={this.state.hiData}
+          data={this.props.hiGeoJson}
           selectedVar={this.props.selectedAcsVar}
         />
         <ComparisonTable
@@ -239,7 +215,7 @@ class Visualization extends React.Component {
 }
 
 Visualization.propTypes = {
-  acsData: PropTypes.any.isRequired,
+  hiGeoJson: PropTypes.object.isRequired,
   acsVars: PropTypes.object.isRequired,
   selectedAcsVar: PropTypes.string.isRequired,
 };

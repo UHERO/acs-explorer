@@ -8,7 +8,7 @@ const Bubblechart = props => {
     if (data.features) {
         const width = 750;
         const height = 350;
-        const margin = 10;
+        const margin = 30;
         const xScale = scaleLinear()
             .domain([0, Math.max(...data.features.map(df => df.properties['Bachelors_Degree_(%)']).filter(d => d !== 'N/A'))])
             .rangeRound([margin, width - margin]);
@@ -33,7 +33,7 @@ const Bubblechart = props => {
             });
         chart.append('g')
             .attr('transform', function() {
-                return 'translate(0,' + (height / 2 ) + ')';
+                return 'translate(0,' + (height - margin ) + ')';
             })
             .call(xAxis);
         chart.append('g')
