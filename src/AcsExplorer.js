@@ -53,12 +53,12 @@ class AcsExplorer extends React.Component {
       hiJson: {},
       loading: false,
       error: null,
-      selectedAcsVar: {
+      selectedMapVar: {
         value: 'Median_Household_Income_($)',
         label: 'Median Household Income ($)',
       },
     };
-    this.handleAcsVarChange = this.handleAcsVarChange.bind(this);
+    this.handleMapVarChange = this.handleMapVarChange.bind(this);
   }
 
   componentDidMount() {
@@ -114,8 +114,8 @@ class AcsExplorer extends React.Component {
     }
   }
 
-  handleAcsVarChange(acsVar) {
-    this.setState({ selectedAcsVar: acsVar });
+  handleMapVarChange(acsVar) {
+    this.setState({ selectedMapVar: acsVar });
   }
 
   render() {
@@ -128,15 +128,21 @@ class AcsExplorer extends React.Component {
     }
     return (
       <div ref="vis">
+        <ul>
+          <li>Select a variable from the dropdown to update the map.</li>
+          <li>
+            Click on up to 2 census tracts to generate a comparison table below.
+          </li>
+        </ul>
         <VariableSelection
           vars={acsVars}
-          selectedAcsVar={this.state.selectedAcsVar}
-          onChangeSelected={this.handleAcsVarChange}
+          selectedVar={this.state.selectedMapVar}
+          onChangeSelected={this.handleMapVarChange}
         />
         <Visualization
           hiGeoJson={this.state.hiJson}
           acsVars={acsVars}
-          selectedAcsVar={this.state.selectedAcsVar.value}
+          selectedMapVar={this.state.selectedMapVar.value}
         />
       </div>
     );

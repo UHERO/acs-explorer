@@ -5,6 +5,7 @@ import './Visualization.css';
 import ComparisonTable from './ComparisonTable';
 import Heatmap from './Heatmap';
 import Bubblechart from './Bubblechart';
+import VariableSelection from './VariableSelection';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
@@ -16,13 +17,23 @@ class Visualization extends React.Component {
     this.state = {
       compareTracts: [],
       legend: [],
+      selectedXVar: {
+        value: 'Median_Household_Income_($)',
+        label: 'Median Household Income ($)',
+      },
+      selectedYVar: {
+        value: 'Median_Household_Income_($)',
+        label: 'Median Household Income ($)',
+      },
     };
     this.fillMapColor = this.fillMapColor.bind(this);
+    this.handleXVarChange = this.handleXVarChange.bind(this);
+    this.handleYVarChange = this.handleYVarChange.bind(this);
   }
   componentDidMount() {
-    const { hiGeoJson, acsVars, selectedAcsVar } = this.props;
+    const { hiGeoJson, acsVars, selectedMapVar } = this.props;
     if (hiGeoJson.features) {
-      const values = this.getSelectedVarValues(selectedAcsVar, hiGeoJson);
+      const values = this.getSelectedVarValues(selectedMapVar, hiGeoJson);
       this.map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v9',
@@ -32,7 +43,7 @@ class Visualization extends React.Component {
       this.map.addControl(new mapboxgl.NavigationControl());
       this.map.on('load', () => {
         this.addCensusTractLayer(this.map, hiGeoJson);
-        this.fillMapColor(values, selectedAcsVar);
+        this.fillMapColor(values, selectedMapVar);
       });
       const popup = new mapboxgl.Popup({
         closeButton: false,
@@ -72,8 +83,8 @@ class Visualization extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.hiGeoJson.features) {
-      const values = this.getSelectedVarValues(nextProps.selectedAcsVar, nextProps.hiGeoJson);
-      this.fillMapColor(values, nextProps.selectedAcsVar);
+      const values = this.getSelectedVarValues(nextProps.selectedMapVar, nextProps.hiGeoJson);
+      this.fillMapColor(values, nextProps.selectedMapVar);
     }
   }
 
@@ -103,7 +114,7 @@ class Visualization extends React.Component {
       .sort((a, b) => a - b);
   }
 
-  fillMapColor(values, selectedAcsVar) {
+  fillMapColor(values, selectedMapVar) {
     // Calculate quintile stops
     let stops = [0];
     for (let i = 1; i < 5; i++) {
@@ -115,7 +126,7 @@ class Visualization extends React.Component {
     }
     const fill = stops.map((stop, index) => { return [stop, colors[index]]; });
     this.map.setPaintProperty('census-tracts', 'fill-color', {
-      property: selectedAcsVar,
+      property: selectedMapVar,
       stops: fill,
     });
     this.setState({
@@ -173,6 +184,14 @@ class Visualization extends React.Component {
     }
   }
 
+  handleXVarChange(acsVar) {
+    this.setState({ selectedXVar: acsVar });
+  }
+
+  handleYVarChange(acsVar) {
+    this.setState({ selectedYVar: acsVar });
+  }
+
   render() {
     const style = {
       height: 500,
@@ -195,14 +214,30 @@ class Visualization extends React.Component {
             </div>
           ))}
         </div>
-        <Bubblechart
-          id="bubblechart"
-          data={this.props.hiGeoJson}
-        />
+        <div id="bubblechart-container">
+          <VariableSelection
+            id="yVarSelector"
+            vars={this.props.acsVars}
+            selectedVar={this.state.selectedYVar}
+            onChangeSelected={this.handleYVarChange}
+          />
+          <Bubblechart
+            id="bubblechart"
+            data={this.props.hiGeoJson}
+            xAxisVar={this.state.selectedXVar.value}
+            yAxisVar={this.state.selectedYVar.value}
+          />
+          <VariableSelection
+            id="xVarSelector"
+            vars={this.props.acsVars}
+            selectedVar={this.state.selectedXVar}
+            onChangeSelected={this.handleXVarChange}
+          />
+        </div>
         <Heatmap
           id="heatmap"
           data={this.props.hiGeoJson}
-          selectedVar={this.props.selectedAcsVar}
+          selectedVar={this.props.selectedMapVar}
         />
         <ComparisonTable
           id="comparison-table"
@@ -217,7 +252,7 @@ class Visualization extends React.Component {
 Visualization.propTypes = {
   hiGeoJson: PropTypes.object.isRequired,
   acsVars: PropTypes.object.isRequired,
-  selectedAcsVar: PropTypes.string.isRequired,
+  selectedMapVar: PropTypes.string.isRequired,
 };
 
 export default Visualization;

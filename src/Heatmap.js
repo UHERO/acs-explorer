@@ -30,7 +30,6 @@ const Heatmap = props => {
             .attr('width', 150)
             .attr('height', barHeight)
             .on('mouseover', (d, i) => {
-                console.log('mouseover', d)
                 tooltip.html('<b>' + d.properties.census_tra + '</b>' + '<br />' + selectedVar.replace(/_/g, ' ') + ': ' + d.properties[selectedVar].toLocaleString())
                     .style('top', i * barHeight - 350 + 'px')
                     .style('opacity', 0.9)

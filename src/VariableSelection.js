@@ -17,17 +17,11 @@ class VariableSelection extends React.Component {
   render() {
     return (
       <div style={{ padding: '10px' }}>
-        <ul>
-          <li>Select a variable from the dropdown to update the map.</li>
-          <li>
-            Click on up to 2 census tracts to generate a comparison table below.
-          </li>
-        </ul>
         <Select
           name="acs-variable-select"
           clearable={false}
           searchable={false}
-          value={this.props.selectedAcsVar}
+          value={this.props.selectedVar}
           onChange={this.changeSelected}
           options={Object.values(this.props.vars).map(v => ({
             value: v,
@@ -41,7 +35,7 @@ class VariableSelection extends React.Component {
 
 VariableSelection.propTypes = {
   onChangeSelected: PropTypes.func.isRequired,
-  selectedAcsVar: PropTypes.object.isRequired,
+  selectedVar: PropTypes.object.isRequired,
   vars: PropTypes.object.isRequired,
 };
 
