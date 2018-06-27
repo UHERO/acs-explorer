@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './Visualization.css';
 import ComparisonTable from './ComparisonTable';
 import Heatmap from './Heatmap';
-import Bubblechart from './Bubblechart';
+import Bubblechart from './Bubblechart/Bubblechart';
 import VariableSelection from './VariableSelection';
 
 mapboxgl.accessToken =
@@ -22,8 +22,8 @@ class Visualization extends React.Component {
         label: 'Median Household Income ($)',
       },
       selectedYVar: {
-        value: 'Median_Household_Income_($)',
-        label: 'Median Household Income ($)',
+        value: 'High_School_Graduates_(%)',
+        label: 'High School Graduates (%)',
       },
     };
     this.fillMapColor = this.fillMapColor.bind(this);
@@ -237,7 +237,8 @@ class Visualization extends React.Component {
         <Heatmap
           id="heatmap"
           data={this.props.hiGeoJson}
-          selectedVar={this.props.selectedMapVar}
+          selectedMapVar={this.props.selectedMapVar}
+          xAxisVar={this.state.selectedXVar.value}
         />
         <ComparisonTable
           id="comparison-table"
