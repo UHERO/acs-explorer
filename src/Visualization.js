@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import './Visualization.css';
 import ComparisonTable from './ComparisonTable';
-import Heatmap from './Heatmap';
+import Heatmap from './Heatmap/Heatmap';
 import Bubblechart from './Bubblechart/Bubblechart';
 import VariableSelection from './VariableSelection';
 
@@ -214,19 +214,18 @@ class Visualization extends React.Component {
             </div>
           ))}
         </div>
-        <div id="bubblechart-container">
+        <div id="varSelectors">
+          The ranked heatmap to the right is sorted by the selected x-axis variable of the scatterplot,
+          and the color is determined by the selected map variable above.
+          <br />
+          <b>Y-Axis:</b>
           <VariableSelection
             id="yVarSelector"
             vars={this.props.acsVars}
             selectedVar={this.state.selectedYVar}
             onChangeSelected={this.handleYVarChange}
           />
-          <Bubblechart
-            id="bubblechart"
-            data={this.props.hiGeoJson}
-            xAxisVar={this.state.selectedXVar.value}
-            yAxisVar={this.state.selectedYVar.value}
-          />
+          <b>X-Axis:</b>
           <VariableSelection
             id="xVarSelector"
             vars={this.props.acsVars}
@@ -234,6 +233,12 @@ class Visualization extends React.Component {
             onChangeSelected={this.handleXVarChange}
           />
         </div>
+        <Bubblechart
+          id="bubblechart"
+          data={this.props.hiGeoJson}
+          xAxisVar={this.state.selectedXVar.value}
+          yAxisVar={this.state.selectedYVar.value}
+        />
         <Heatmap
           id="heatmap"
           data={this.props.hiGeoJson}
