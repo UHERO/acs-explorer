@@ -1,0 +1,13 @@
+.axis .domain {
+    display: none;
+}
+
+.axis .tick line {
+    display: none;
+}
+
+.axis .tick text {
+    fill: #505050;
+    font-size: 1.2em;
+    text-transform: uppercase;
+}

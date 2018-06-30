@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { select } from 'd3-selection';
+import './Axis.css';
 
 class Axis extends React.Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class Axis extends React.Component {
     renderAxis = () => {
         const node = ReactDOM.findDOMNode(this);
         select(node).call(this.props.axis);
+        // select('.domain').remove();
     }
     render = () => {
         const translate = 'translate(0,' + this.props.h + ')';

@@ -12,6 +12,10 @@ class Bubblechart extends React.Component {
         this.state = {
             tooltip: {
                 display: false,
+                pos: {
+                    x: null,
+                    y: null,
+                },
                 data: {
                     tract: '',
                     xVar: '',
@@ -24,7 +28,7 @@ class Bubblechart extends React.Component {
     }
 
     render = () => {
-        const { data, xAxisVar, yAxisVar } = this.props;
+        const { id, data, xAxisVar, yAxisVar } = this.props;
 
         if (data.features) {
             const filtered = [];
@@ -33,8 +37,8 @@ class Bubblechart extends React.Component {
                     filtered.push(df);
                 }
             });
-            const margin = { top: 30, right: 20, bottom: 30, left: 20 };
-            const outerWidth = 450, outerHeight = 400;
+            const margin = { top: 30, right: 20, bottom: 30, left: 75 };
+            const outerWidth = 700, outerHeight = 400;
             const width = outerWidth - margin.left - margin.right;
             const height = outerHeight - margin.top - margin.bottom;
 
@@ -50,10 +54,10 @@ class Bubblechart extends React.Component {
 
             const yAxis = axisLeft()
                 .scale(yScale)
-                .ticks(5);
+                .ticks(5, 's');
             const xAxis = axisBottom()
                 .scale(xScale)
-                .ticks(5);
+                .ticks(5, 's')
 
             const points = filtered.map((d, i) => {
                 return <circle
@@ -72,7 +76,7 @@ class Bubblechart extends React.Component {
             const transform = 'translate(' + margin.left + ', ' + margin.top + ')';
 
             return (
-                <div>
+                <div id={id}>
                 <svg width={outerWidth} height={outerHeight} >
                     <g transform={transform}>
                         <Axis h={height} axis={yAxis} axisType='y' />
@@ -110,6 +114,10 @@ class Bubblechart extends React.Component {
         this.setState({
             tooltip: {
                 display: false,
+                pos: {
+                    x: null,
+                    y: null,
+                },
                 data: {
                     tract: '',
                     xVar: '',

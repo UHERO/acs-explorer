@@ -10,13 +10,13 @@ class VariableSelection extends React.Component {
     this.changeSelected = this.changeSelected.bind(this);
   }
 
-  changeSelected(selectedOption) {
+  changeSelected = (selectedOption) => {
     this.props.onChangeSelected(selectedOption);
   }
 
-  render() {
+  render = () => {
     return (
-      <div style={{ padding: '10px' }}>
+      <div>
         <Select
           name="acs-variable-select"
           clearable={false}

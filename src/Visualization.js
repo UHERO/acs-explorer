@@ -30,7 +30,7 @@ class Visualization extends React.Component {
     this.handleXVarChange = this.handleXVarChange.bind(this);
     this.handleYVarChange = this.handleYVarChange.bind(this);
   }
-  componentDidMount() {
+  componentDidMount = () => {
     const { hiGeoJson, acsVars, selectedMapVar } = this.props;
     if (hiGeoJson.features) {
       const values = this.getSelectedVarValues(selectedMapVar, hiGeoJson);
@@ -81,14 +81,14 @@ class Visualization extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps = (nextProps) => {
     if (this.props.hiGeoJson.features) {
       const values = this.getSelectedVarValues(nextProps.selectedMapVar, nextProps.hiGeoJson);
       this.fillMapColor(values, nextProps.selectedMapVar);
     }
   }
 
-  addCensusTractLayer(map, geoJson) {
+  addCensusTractLayer = (map, geoJson) => {
     // Find layer with place names
     const layers = map.getStyle().layers;
     const symbolLayer = layers.find(l => l.type === 'symbol').id;
@@ -107,14 +107,14 @@ class Visualization extends React.Component {
     );
   }
 
-  getSelectedVarValues(selectedVar, geoJson) {
+  getSelectedVarValues = (selectedVar, geoJson) => {
     return geoJson.features
       .map(ct => ct.properties[selectedVar])
       .filter(v => v !== 'N/A')
       .sort((a, b) => a - b);
   }
 
-  fillMapColor(values, selectedMapVar) {
+  fillMapColor = (values, selectedMapVar) => {
     // Calculate quintile stops
     let stops = [0];
     for (let i = 1; i < 5; i++) {
@@ -135,7 +135,7 @@ class Visualization extends React.Component {
     this.map.setPaintProperty('census-tracts', 'fill-opacity', 0.7);
   }
 
-  highlightSelectedTracts(map, compareTracts) {
+  highlightSelectedTracts = (map, compareTracts) => {
     if (typeof this.map.getLayer('selectedTracts') !== 'undefined') {
       this.map.getSource('selectedTracts').setData({
         type: 'FeatureCollection',
@@ -161,7 +161,7 @@ class Visualization extends React.Component {
     });
   }
 
-  selectTractForComparison(selectedTract, map, compareTracts) {
+  selectTractForComparison = (selectedTract, map, compareTracts) => {
     const tracts = compareTracts;
     const countyFP = selectedTract.properties.COUNTYFP;
     const tractce = selectedTract.properties.TRACTCE;
@@ -184,15 +184,15 @@ class Visualization extends React.Component {
     }
   }
 
-  handleXVarChange(acsVar) {
+  handleXVarChange = (acsVar) => {
     this.setState({ selectedXVar: acsVar });
   }
 
-  handleYVarChange(acsVar) {
+  handleYVarChange = (acsVar) => {
     this.setState({ selectedYVar: acsVar });
   }
 
-  render() {
+  render = () => {
     const style = {
       height: 500,
       marginBottom: '15px',
@@ -214,18 +214,19 @@ class Visualization extends React.Component {
             </div>
           ))}
         </div>
-        <div id="varSelectors">
-          The ranked heatmap to the right is sorted by the selected x-axis variable of the scatterplot,
-          and the color is determined by the selected map variable above.
-          <br />
-          <b>Y-Axis:</b>
+        <div id="bubblechart-container">
+          <Bubblechart
+            id={'bubblechart'}
+            data={this.props.hiGeoJson}
+            xAxisVar={this.state.selectedXVar.value}
+            yAxisVar={this.state.selectedYVar.value}
+          />
           <VariableSelection
             id="yVarSelector"
             vars={this.props.acsVars}
             selectedVar={this.state.selectedYVar}
             onChangeSelected={this.handleYVarChange}
           />
-          <b>X-Axis:</b>
           <VariableSelection
             id="xVarSelector"
             vars={this.props.acsVars}
@@ -233,15 +234,10 @@ class Visualization extends React.Component {
             onChangeSelected={this.handleXVarChange}
           />
         </div>
-        <Bubblechart
-          id="bubblechart"
-          data={this.props.hiGeoJson}
-          xAxisVar={this.state.selectedXVar.value}
-          yAxisVar={this.state.selectedYVar.value}
-        />
         <Heatmap
           id="heatmap"
           data={this.props.hiGeoJson}
+          compareTracts={this.state.compareTracts}
           selectedMapVar={this.props.selectedMapVar}
           xAxisVar={this.state.selectedXVar.value}
         />

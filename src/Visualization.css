@@ -1,10 +1,10 @@
 #map-container {
     display: grid;
-    grid-template-rows: 500px 450px 550px;
-    grid-template-columns: auto 450px 150px;
+    grid-template-rows: 500px 500px 550px;
+    grid-template-columns: 770px 150px;
     grid-template-areas:
         'legend' 'map'
-        'varSelectors' 'bubblechart' 'heatmap'
+        'bubblechart-container' 'heatmap'
         'comparison-table';
     margin: 40px;
 }
@@ -47,24 +47,29 @@
 
 #yVarSelector {
     grid-area: yVarSelector;
+    grid-row: 2;
     grid-column: 1 / span 1;
 }
 
 #xVarSelector {
     grid-area: xVarSelector;
+    grid-row: 2;
     grid-column: 2 / span 1;
 }
 
 #bubblechart {
     grid-area: bubblechart;
-    grid-column: 2 / span 1;
-    grid-row: 2 / span 1;
+    grid-column: 1 / span 2;
+    grid-row: 1;
 }
 
-#varSelectors {
-    grid-area: varSelectors;
+#bubblechart-container {
+    grid-area: bubblechart-container;
     grid-column: 1 / span 1;
     grid-row: 2 / span 1;
+    display: grid;
+    grid-template-rows: 450px 50px;
+    grid-template-columns: 250px 250px;
 }
 
 #heatmap {

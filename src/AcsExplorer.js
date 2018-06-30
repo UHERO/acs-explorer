@@ -61,7 +61,7 @@ class AcsExplorer extends React.Component {
     this.handleMapVarChange = this.handleMapVarChange.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     this.setState({ loading: true });
     fetch(baseURL + Object.keys(acsVars).join() + tractParams + key)
       .then(response => {
@@ -97,7 +97,7 @@ class AcsExplorer extends React.Component {
       });
   }
 
-  addAcsToGeoJson(ct, acsData) {
+  addAcsToGeoJson = (ct, acsData) => {
     const tractce = ct.properties.TRACTCE;
     const countyFP = ct.properties.COUNTYFP;
     const match = acsData.findIndex(d => d.tract === tractce && d.county === countyFP);
@@ -114,11 +114,11 @@ class AcsExplorer extends React.Component {
     }
   }
 
-  handleMapVarChange(acsVar) {
+  handleMapVarChange = (acsVar) => {
     this.setState({ selectedMapVar: acsVar });
   }
 
-  render() {
+  render = () => {
     if (this.state.error) {
       console.log('error', this.state.error);
       return <p>An error has occurred.</p>
