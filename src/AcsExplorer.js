@@ -128,13 +128,11 @@ class AcsExplorer extends React.Component {
     }
     return (
       <div ref="vis">
-        <ul>
-          <li>Select a variable from the dropdown to update the map.</li>
-          <li>
-            Click on up to 2 census tracts to generate a comparison table below.
-          </li>
-        </ul>
+        <p>This dashboard uses 2016 ACS 5-Year estimates for the state of Hawaii. Select a variable from the Map Selector to update the map. The colors of the map control to colors of the ranked heatmap.
+          The heatmap is sorted by the x-axis variable selected for the scatterplot below.</p>
         <VariableSelection
+          id={'mapVarSelector'}
+          formName={''}        
           vars={acsVars}
           selectedVar={this.state.selectedMapVar}
           onChangeSelected={this.handleMapVarChange}

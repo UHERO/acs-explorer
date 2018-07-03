@@ -10,6 +10,7 @@ ul li {
 
 .Select {
     width: 225px;
+    z-index: 10;
 }
 
 .Select .Select-control {

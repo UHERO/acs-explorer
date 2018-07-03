@@ -1,7 +1,7 @@
 import React from 'react';
 import { extent } from 'd3';
 import { scaleQuantile } from 'd3-scale';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip/Tooltip';
 
 class Heatmap extends React.Component {
     constructor(props) {
@@ -9,9 +9,11 @@ class Heatmap extends React.Component {
         this.state = {
             tooltip: {
                 display: false,
+                pos: {},
                 data: {
                     tract: '',
                     xVar: '',
+                    yVar: '',
                 }
             }
         }
@@ -20,7 +22,7 @@ class Heatmap extends React.Component {
     }
 
     render = () => {
-        const { data, compareTracts, selectedMapVar, xAxisVar } = this.props;
+        const { data, compareTracts, selectedMapVar, xAxisVar, yAxisVar } = this.props;
         if (data.features) {
             const filtered = [];
             const selectedTracts = compareTracts.map((t) => {
@@ -50,7 +52,7 @@ class Heatmap extends React.Component {
                     width={width}
                     height={barHeight}
                     fill={ selectedTracts.includes(d.properties['TRACTCE']) ? '#F6A01B' : colorRange(d.properties[selectedMapVar])}
-                    onMouseOver={(event) => this.showTooltip(event, d, xAxisVar)}
+                    onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar)}
                     onMouseOut={this.hideTooltip}
                 />
             });
@@ -71,17 +73,31 @@ class Heatmap extends React.Component {
         }
     }
 
-    showTooltip = (e, d, xVar) => {
+    setTooltipPosition = (x, y, tooltipHeight) => {
+        let top = 0;
+        y = parseInt(y);
+        if (y > tooltipHeight) {
+            top = y - 650;
+        }
+        if (y < tooltipHeight) {
+            top = y - 500;
+        }
+        return { left: '0px', top: top + 'px', width: null };
+    }
+
+    showTooltip = (e, d, xVar, yVar) => {
+        const xPos = e.target.getAttribute('x');
+        const yPos = e.target.getAttribute('y');
+        const tooltipHeight = 100;
+        const tPosition = this.setTooltipPosition(xPos, yPos, tooltipHeight);
         this.setState({
             tooltip: {
                 display: true,
-                pos: {
-                    x: e.target.getAttribute('x'),
-                    y: e.target.getAttribute('y'),
-                },
+                pos: tPosition,
                 data: {
                     tract: d,
                     xVar: xVar,
+                    yVar: yVar,
                 }
             }
         });
@@ -91,6 +107,7 @@ class Heatmap extends React.Component {
         this.setState({
             tooltip: {
                 display: false,
+                pos: {},
                 data: {
                     tract: '',
                     xVar: '',

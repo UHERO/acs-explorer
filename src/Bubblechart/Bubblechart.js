@@ -3,7 +3,7 @@
 import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { axisLeft, axisBottom } from 'd3-axis';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip/Tooltip';
 import Axis from './Axis';
 
 class Bubblechart extends React.Component {
@@ -12,10 +12,7 @@ class Bubblechart extends React.Component {
         this.state = {
             tooltip: {
                 display: false,
-                pos: {
-                    x: null,
-                    y: null,
-                },
+                pos: {},
                 data: {
                     tract: '',
                     xVar: '',
@@ -28,16 +25,19 @@ class Bubblechart extends React.Component {
     }
 
     render = () => {
-        const { id, data, xAxisVar, yAxisVar } = this.props;
+        const { id, data, compareTracts, xAxisVar, yAxisVar } = this.props;
 
         if (data.features) {
+            const selectedTracts = compareTracts.map((t) => {
+                return t.properties['TRACTCE'];
+            });
             const filtered = [];
             data.features.forEach((df) => {
                 if (df.properties[xAxisVar] !== 'N/A' && df.properties[yAxisVar] !== 'N/A') {
                     filtered.push(df);
                 }
             });
-            const margin = { top: 30, right: 20, bottom: 30, left: 75 };
+            const margin = { top: 30, right: 20, bottom: 30, left: 50 };
             const outerWidth = 700, outerHeight = 400;
             const width = outerWidth - margin.left - margin.right;
             const height = outerHeight - margin.top - margin.bottom;
@@ -66,8 +66,8 @@ class Bubblechart extends React.Component {
                     cy={yScale(d.properties[yAxisVar])}
                     r={rScale(d.properties[xAxisVar])}
                     fill={'transparent'}
-                    stroke={'#1D667F'}
-                    opacity={0.4}
+                    stroke={selectedTracts.includes(d.properties['TRACTCE']) ? '#F6A01B' : '#1D667F'}
+                    opacity={selectedTracts.includes(d.properties['TRACTCE']) ? 1 : 0.4}
                     strokeWidth={2}
                     onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar)}
                     onMouseOut={this.hideTooltip}
@@ -93,14 +93,32 @@ class Bubblechart extends React.Component {
         }
     }
 
+    setTooltipPosition = (x, y, tooltipHeight, tooltipWidth) => {
+        y = parseInt(y);
+        x = parseInt(x);
+        let top = 0, left = x + 50;
+        if (y > tooltipHeight) {
+            top = y - tooltipHeight - 370;
+        }
+        if (y < tooltipHeight) {
+            top = Math.round(y) + 30 - 390;
+        }
+        if (x > tooltipWidth) {
+            left = x + 30 - tooltipWidth;
+        }
+        return { left: left + 'px', top: top + 'px', width: '250px' };
+    }
+
     showTooltip = (e, d, xVar, yVar) => {
+        const xPos = e.target.getAttribute('cx');
+        const yPos = e.target.getAttribute('cy');
+        const tooltipHeight = 100;
+        const tooltipWidth = 250;
+        const tPosition = this.setTooltipPosition(xPos, yPos, tooltipHeight, tooltipWidth);
         this.setState({
             tooltip: {
                 display: true,
-                pos: {
-                    x: e.target.getAttribute('cx'),
-                    y: e.target.getAttribute('cy'),
-                },
+                pos: tPosition,
                 data: {
                     tract: d,
                     xVar: xVar,
@@ -114,10 +132,7 @@ class Bubblechart extends React.Component {
         this.setState({
             tooltip: {
                 display: false,
-                pos: {
-                    x: null,
-                    y: null,
-                },
+                pos: {},
                 data: {
                     tract: '',
                     xVar: '',

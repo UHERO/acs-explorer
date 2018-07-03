@@ -218,17 +218,20 @@ class Visualization extends React.Component {
           <Bubblechart
             id={'bubblechart'}
             data={this.props.hiGeoJson}
+            compareTracts={this.state.compareTracts}
             xAxisVar={this.state.selectedXVar.value}
             yAxisVar={this.state.selectedYVar.value}
           />
           <VariableSelection
-            id="yVarSelector"
+            id={'yVarSelector'}
+            formName={'Y-Axis:'}
             vars={this.props.acsVars}
             selectedVar={this.state.selectedYVar}
             onChangeSelected={this.handleYVarChange}
           />
           <VariableSelection
-            id="xVarSelector"
+            id={'xVarSelector'}
+            formName={'X-Axis:'}
             vars={this.props.acsVars}
             selectedVar={this.state.selectedXVar}
             onChangeSelected={this.handleXVarChange}
@@ -240,6 +243,7 @@ class Visualization extends React.Component {
           compareTracts={this.state.compareTracts}
           selectedMapVar={this.props.selectedMapVar}
           xAxisVar={this.state.selectedXVar.value}
+          yAxisVar={this.state.selectedYVar.value}
         />
         <ComparisonTable
           id="comparison-table"
