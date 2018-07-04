@@ -3,7 +3,7 @@ import Enzyme, { mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import AcsExplorer from './AcsExplorer';
 import VariableSelection from './VariableSelection';
-import Visualization from './Visualization';
+import Map from './Map';
 
 Enzyme.configure({ adapter: new Adapter() });
 jest.mock('mapbox-gl/dist/mapbox-gl', () => ({
@@ -44,9 +44,9 @@ describe('AcsExplorer', () => {
                     });
                 });
 
-                describe('rendered Visualization', () => {
+                describe('rendered Map', () => {
                     it('receives 3 props', () => {
-                        const vis = visComponent.find(Visualization);
+                        const vis = visComponent.find(Map);
                         expect(Object.keys(vis.props()).length).toBe(3);
                     });
                 });

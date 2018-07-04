@@ -25,7 +25,7 @@ class Bubblechart extends React.Component {
     }
 
     render = () => {
-        const { id, data, compareTracts, xAxisVar, yAxisVar } = this.props;
+        const { data, compareTracts, xAxisVar, yAxisVar } = this.props;
 
         if (data.features) {
             const selectedTracts = compareTracts.map((t) => {
@@ -37,7 +37,7 @@ class Bubblechart extends React.Component {
                     filtered.push(df);
                 }
             });
-            const margin = { top: 30, right: 20, bottom: 30, left: 50 };
+            const margin = { top: 30, right: 20, bottom: 20, left: 40 };
             const outerWidth = 700, outerHeight = 400;
             const width = outerWidth - margin.left - margin.right;
             const height = outerHeight - margin.top - margin.bottom;
@@ -67,7 +67,7 @@ class Bubblechart extends React.Component {
                     r={rScale(d.properties[xAxisVar])}
                     fill={'transparent'}
                     stroke={selectedTracts.includes(d.properties['TRACTCE']) ? '#F6A01B' : '#1D667F'}
-                    opacity={selectedTracts.includes(d.properties['TRACTCE']) ? 1 : 0.4}
+                    opacity={0.4}
                     strokeWidth={2}
                     onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar)}
                     onMouseOut={this.hideTooltip}
@@ -76,7 +76,7 @@ class Bubblechart extends React.Component {
             const transform = 'translate(' + margin.left + ', ' + margin.top + ')';
 
             return (
-                <div id={id}>
+                <div id='bubblechart'>
                 <svg width={outerWidth} height={outerHeight} >
                     <g transform={transform}>
                         <Axis h={height} axis={yAxis} axisType='y' />
@@ -94,8 +94,8 @@ class Bubblechart extends React.Component {
     }
 
     setTooltipPosition = (x, y, tooltipHeight, tooltipWidth) => {
-        y = parseInt(y);
-        x = parseInt(x);
+        y = parseInt(y, 10);
+        x = parseInt(x, 10);
         let top = 0, left = x + 50;
         if (y > tooltipHeight) {
             top = y - tooltipHeight - 370;
@@ -110,6 +110,7 @@ class Bubblechart extends React.Component {
     }
 
     showTooltip = (e, d, xVar, yVar) => {
+        e.target.style.opacity = 1;
         const xPos = e.target.getAttribute('cx');
         const yPos = e.target.getAttribute('cy');
         const tooltipHeight = 100;
@@ -129,6 +130,7 @@ class Bubblechart extends React.Component {
     }
 
     hideTooltip = (e) => {
+        e.target.style.opacity = 0.4;
         this.setState({
             tooltip: {
                 display: false,

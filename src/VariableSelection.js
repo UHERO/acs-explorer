@@ -17,7 +17,7 @@ class VariableSelection extends React.Component {
   render = () => {
     return (
       <div id={this.props.id}>
-        <p style={{fontWeight: 'bold', paddingBottom: '5px'}}>{this.props.formName}</p>
+        <label style={{fontWeight: 'bold'}}>{this.props.formName}</label>
         <Select
           name="acs-variable-select"
           clearable={false}

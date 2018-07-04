@@ -1,7 +1,11 @@
 import React from 'react';
-import Visualization from './Visualization';
+import Map from './Map';
 import VariableSelection from './VariableSelection';
 import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
+import Bubblechart from './Bubblechart/Bubblechart';
+import Heatmap from './Heatmap/Heatmap';
+import ComparisonTable from './ComparisonTable';
+import './AcsExplorer.css';
 
 const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
 /* Variables from ACS 5-Year Data Profile API:
@@ -53,12 +57,22 @@ class AcsExplorer extends React.Component {
       hiJson: {},
       loading: false,
       error: null,
+      compareTracts: [],
       selectedMapVar: {
         value: 'Median_Household_Income_($)',
         label: 'Median Household Income ($)',
       },
+      selectedXVar: {
+        value: 'Median_Household_Income_($)',
+        label: 'Median Household Income ($)',
+      },
+      selectedYVar: {
+        value: 'High_School_Graduates_(%)',
+        label: 'High School Graduates (%)',
+      },
     };
     this.handleMapVarChange = this.handleMapVarChange.bind(this);
+    this.updateTractComparisons = this.updateTractComparisons.bind(this);
   }
 
   componentDidMount = () => {
@@ -118,6 +132,18 @@ class AcsExplorer extends React.Component {
     this.setState({ selectedMapVar: acsVar });
   }
 
+  handleXVarChange = (acsVar) => {
+    this.setState({ selectedXVar: acsVar });
+  }
+
+  handleYVarChange = (acsVar) => {
+    this.setState({ selectedYVar: acsVar });
+  }
+
+  updateTractComparisons = (tracts) => {
+    this.setState({ compareTracts: tracts });
+  }
+
   render = () => {
     if (this.state.error) {
       console.log('error', this.state.error);
@@ -127,20 +153,61 @@ class AcsExplorer extends React.Component {
       return <p>Loading...</p>;
     }
     return (
-      <div ref="vis">
-        <p>This dashboard uses 2016 ACS 5-Year estimates for the state of Hawaii. Select a variable from the Map Selector to update the map. The colors of the map control to colors of the ranked heatmap.
-          The heatmap is sorted by the x-axis variable selected for the scatterplot below.</p>
-        <VariableSelection
-          id={'mapVarSelector'}
-          formName={''}        
-          vars={acsVars}
-          selectedVar={this.state.selectedMapVar}
-          onChangeSelected={this.handleMapVarChange}
-        />
-        <Visualization
+      <div id="dashboard">
+        <div ref="vis" id="vis-intro">
+          <p>This dashboard uses the 2016 ACS 5-Year estimates for the state of Hawaii. Select a variable from the Map Selector to update the map.
+          This variable also controls the colors of the ranked heatmap below.
+          The census tracts in the heatmap are sorted by the x-axis variable selected for the scatterplot below the map.
+          Click on the census tracts on the map to generate a comparison table at the bottom of the dashboard. Up to two tracts may be selected at a time.</p>
+          <p>*Note: The High School Graduates, Bachelor's Degree, and Graduate/Professional Degree variables refer to the highest level of academic achievement.</p>
+          <VariableSelection
+            id={'mapVarSelector'}
+            formName={'Map Selector:'}
+            vars={acsVars}
+            selectedVar={this.state.selectedMapVar}
+            onChangeSelected={this.handleMapVarChange}
+          />
+        </div>
+        <Map
           hiGeoJson={this.state.hiJson}
           acsVars={acsVars}
+          onUpdateCompare={this.updateTractComparisons}
           selectedMapVar={this.state.selectedMapVar.value}
+        />
+        <div id="bubblechart-container">
+          <Bubblechart
+            data={this.state.hiJson}
+            compareTracts={this.state.compareTracts}
+            xAxisVar={this.state.selectedXVar.value}
+            yAxisVar={this.state.selectedYVar.value}
+          />
+          <VariableSelection
+            id={'yVarSelector'}
+            formName={'Y-Axis:'}
+            vars={acsVars}
+            selectedVar={this.state.selectedYVar}
+            onChangeSelected={this.handleYVarChange}
+          />
+          <VariableSelection
+            id={'xVarSelector'}
+            formName={'X-Axis:'}
+            vars={acsVars}
+            selectedVar={this.state.selectedXVar}
+            onChangeSelected={this.handleXVarChange}
+          />
+        </div>
+        <Heatmap
+          id="heatmap"
+          data={this.state.hiJson}
+          compareTracts={this.state.compareTracts}
+          selectedMapVar={this.state.selectedMapVar.value}
+          xAxisVar={this.state.selectedXVar.value}
+          yAxisVar={this.state.selectedYVar.value}
+        />
+        <ComparisonTable
+          id="comparison-table"
+          tracts={this.state.compareTracts}
+          vars={acsVars}
         />
       </div>
     );

@@ -1,0 +1,43 @@
+#dashboard {
+    display: grid;
+    grid-template-rows: 500px 505px 550px;
+    grid-template-columns: 250px 700px;
+    font-family: sans-serif;
+    justify-self: center;
+    margin-top: 40px;
+}
+
+#vis-intro {
+    background-color: #CAD2D3;
+    grid-area: vis-intro;
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
+    padding: 10px;
+}
+
+#vis-intro p {
+    font-family: sans-serif;
+    line-height: 1.2em;
+    margin-bottom: 10px;
+}
+
+#yVarSelector {
+    grid-area: yVarSelector;
+    grid-row: 2;
+    grid-column: 1 / span 1;
+}
+
+#xVarSelector {
+    grid-area: xVarSelector;
+    grid-row: 2;
+    grid-column: 2 / span 1;
+}
+
+#bubblechart-container {
+    grid-area: bubblechart-container;
+    grid-column: 2 / span 1;
+    grid-row: 2 / span 1;
+    display: grid;
+    grid-template-rows: 450px 55px;
+    grid-template-columns: 250px 250px;
+}

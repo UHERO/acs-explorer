@@ -1,34 +1,20 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
-import './Visualization.css';
-import ComparisonTable from './ComparisonTable';
-import Heatmap from './Heatmap/Heatmap';
-import Bubblechart from './Bubblechart/Bubblechart';
-import VariableSelection from './VariableSelection';
+import './Map.css';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
 
 const colors = ['#EFF3FF', '#BDD7E7', '#6BAED6', '#3182BD', '#08519C'];
-class Visualization extends React.Component {
+class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       compareTracts: [],
       legend: [],
-      selectedXVar: {
-        value: 'Median_Household_Income_($)',
-        label: 'Median Household Income ($)',
-      },
-      selectedYVar: {
-        value: 'High_School_Graduates_(%)',
-        label: 'High School Graduates (%)',
-      },
     };
     this.fillMapColor = this.fillMapColor.bind(this);
-    this.handleXVarChange = this.handleXVarChange.bind(this);
-    this.handleYVarChange = this.handleYVarChange.bind(this);
   }
   componentDidMount = () => {
     const { hiGeoJson, acsVars, selectedMapVar } = this.props;
@@ -169,27 +155,22 @@ class Visualization extends React.Component {
     if (exist > -1) {
       tracts.splice(exist, 1);
       this.setState({ compareTracts: tracts });
+      this.props.onUpdateCompare(tracts);
       return;
     }
     if (exist === -1 && tracts.length < 2) {
       tracts.push(selectedTract);
       this.setState({ compareTracts: tracts });
+      this.props.onUpdateCompare(tracts);
       return;
     }
     if (exist === -1 && tracts.length >= 2) {
       tracts.splice(0, 1);
       tracts.push(selectedTract);
       this.setState({ compareTracts: tracts });
+      this.props.onUpdateCompare(tracts);
       return;
     }
-  }
-
-  handleXVarChange = (acsVar) => {
-    this.setState({ selectedXVar: acsVar });
-  }
-
-  handleYVarChange = (acsVar) => {
-    this.setState({ selectedYVar: acsVar });
   }
 
   render = () => {
@@ -214,51 +195,15 @@ class Visualization extends React.Component {
             </div>
           ))}
         </div>
-        <div id="bubblechart-container">
-          <Bubblechart
-            id={'bubblechart'}
-            data={this.props.hiGeoJson}
-            compareTracts={this.state.compareTracts}
-            xAxisVar={this.state.selectedXVar.value}
-            yAxisVar={this.state.selectedYVar.value}
-          />
-          <VariableSelection
-            id={'yVarSelector'}
-            formName={'Y-Axis:'}
-            vars={this.props.acsVars}
-            selectedVar={this.state.selectedYVar}
-            onChangeSelected={this.handleYVarChange}
-          />
-          <VariableSelection
-            id={'xVarSelector'}
-            formName={'X-Axis:'}
-            vars={this.props.acsVars}
-            selectedVar={this.state.selectedXVar}
-            onChangeSelected={this.handleXVarChange}
-          />
-        </div>
-        <Heatmap
-          id="heatmap"
-          data={this.props.hiGeoJson}
-          compareTracts={this.state.compareTracts}
-          selectedMapVar={this.props.selectedMapVar}
-          xAxisVar={this.state.selectedXVar.value}
-          yAxisVar={this.state.selectedYVar.value}
-        />
-        <ComparisonTable
-          id="comparison-table"
-          tracts={this.state.compareTracts}
-          vars={this.props.acsVars}
-        />
       </div>
     );
   }
 }
 
-Visualization.propTypes = {
+Map.propTypes = {
   hiGeoJson: PropTypes.object.isRequired,
   acsVars: PropTypes.object.isRequired,
   selectedMapVar: PropTypes.string.isRequired,
 };
 
-export default Visualization;
+export default Map;

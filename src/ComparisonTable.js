@@ -4,11 +4,11 @@ import './ComparisonTable.css';
 const ComparisonTable = props => {
   const { vars, tracts } = props;
   if (!tracts.length) {
-    return <p />;
+    return <div id="select-note"><p>Select tracts from the map above.</p></div>;
   }
   if (tracts.length) {
     return (
-      <table>
+      <table id="comparison-table">
         <thead>
           <tr>
             <th>&nbsp;</th>

@@ -17,21 +17,22 @@ const Tooltip = (props) => {
         yValue = data.properties[yVar].toLocaleString();
         visibility = 'visible';
         style = {
-            'visibility': visibility,
-            'width': position.width,
-            'position': 'relative',
-            'left': position.left,
-            'top': position.top,
-            'padding': '10px',
-            'backgroundColor': '#FFF',
-            'boxShadow': '#505050 1px 2px 2px',
-            'borderRadius': '4px',
-            'fontSize': '1em',
-            'fontFamily': 'sans-serif',
-            'lineHeight': '20px'
+            visibility: visibility,
+            width: position.width,
+            position: 'relative',
+            left: position.left,
+            top: position.top,
+            padding: '10px',
+            backgroundColor: '#FFF',
+            boxShadow: '#505050 1px 2px 2px',
+            borderRadius: '4px',
+            fontSize: '1em',
+            fontFamily: 'sans-serif',
+            lineHeight: '20px',
+            zIndex: '10'
         }
     }
-    if (!props.tooltip.display) {
+    if (!display) {
         visibility = 'hidden';
     }
     return <div className='chart-tooltip' style={style}>

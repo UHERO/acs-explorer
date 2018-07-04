@@ -1,10 +1,9 @@
-table {
+#comparison-table {
     font-size: 12px;
     font-family: sans-serif;
     margin-bottom: 10px;
     grid-column: 1 / span 2;
     grid-row: 3 / span 1;
-    width: 100%;
 }
 
 th, td {
@@ -23,4 +22,13 @@ th {
 
 .values {
     text-align: right;
+}
+
+#select-note {
+    grid-column: 1 / span 2;
+    grid-row: 3 / span 1;
+    align-self: center;
+    justify-self: center;
+    color: #E5E5E5;
+    font-size: 2em;
 }

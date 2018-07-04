@@ -2,6 +2,7 @@ import React from 'react';
 import { extent } from 'd3';
 import { scaleQuantile } from 'd3-scale';
 import Tooltip from '../Tooltip/Tooltip';
+import './Heatmap.css';
 
 class Heatmap extends React.Component {
     constructor(props) {
@@ -41,8 +42,8 @@ class Heatmap extends React.Component {
             });
             const colors = ['#EFF3FF', '#BDD7E7', '#6BAED6', '#3182BD', '#08519C'];
             const colorRange = scaleQuantile().domain(colorDomain).range(colors);
-            const width = 150;
-            const height = 500;
+            const width = 200;
+            const height = 505;
             const barHeight = height / filtered.length;
             const bars = filtered.map((d, i) => {
                 return <rect
@@ -51,6 +52,7 @@ class Heatmap extends React.Component {
                     y={i * barHeight}
                     width={width}
                     height={barHeight}
+                    opacity={0.7}
                     fill={ selectedTracts.includes(d.properties['TRACTCE']) ? '#F6A01B' : colorRange(d.properties[selectedMapVar])}
                     onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar)}
                     onMouseOut={this.hideTooltip}
@@ -58,7 +60,7 @@ class Heatmap extends React.Component {
             });
 
             return (
-                <div className='heatmap-container'>
+                <div id='heatmap-container'>
                     <svg id='ranked-heatmap' width={width} height={height}>
                         <g>
                             {bars}
@@ -75,9 +77,9 @@ class Heatmap extends React.Component {
 
     setTooltipPosition = (x, y, tooltipHeight) => {
         let top = 0;
-        y = parseInt(y);
+        y = parseInt(y, 10);
         if (y > tooltipHeight) {
-            top = y - 650;
+            top = y - 600;
         }
         if (y < tooltipHeight) {
             top = y - 500;
