@@ -20,6 +20,7 @@ describe('Heatmap', () => {
     beforeEach(() => {
         props = {
             data: {},
+            compareTracts: [],
             selectedVar: ''
         }
         mountedHeatmap = undefined

@@ -28,11 +28,11 @@ describe('AcsExplorer', () => {
     });
 
     describe('when fetching data from ACS is successful', () => {
-        it('renders a vis container div', () => {
+        it('renders dashboard, vis-intro, and bubblechart divs', () => {
             const visComponent = shallow(<AcsExplorer />);
             visComponent.setState({ loading: false, error: false, data: [{ TRACTCE: 'test' }] });
             const div = visComponent.find('div');
-            expect(div.length).toBe(1);
+            expect(div.length).toBe(3);
 
             describe('the rendered div contains VariableSelection and Visualization components', () => {
                 expect(div.children()).toEqual(visComponent.children());

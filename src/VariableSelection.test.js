@@ -21,7 +21,7 @@ describe('VariableSelection', () => {
     beforeEach(() => {
         props = {
             vars: {},
-            selectedAcsVar: {},
+            selectedAcsVar: 'testVar',
             onChangeSelected: jest.fn(),
         }
         mountedVarSelection = undefined;
