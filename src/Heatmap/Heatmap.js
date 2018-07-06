@@ -15,6 +15,7 @@ class Heatmap extends React.Component {
                     tract: '',
                     xVar: '',
                     yVar: '',
+                    mapVar: '',
                 }
             }
         }
@@ -48,13 +49,13 @@ class Heatmap extends React.Component {
             const bars = filtered.map((d, i) => {
                 return <rect
                     key={'rect' + i}
-                    x={0}
+                    x={10}
                     y={i * barHeight}
                     width={width}
                     height={barHeight}
-                    opacity={0.7}
+                    opacity={1}
                     fill={ selectedTracts.includes(d.properties['TRACTCE']) ? '#F6A01B' : colorRange(d.properties[selectedMapVar])}
-                    onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar)}
+                    onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar, selectedMapVar)}
                     onMouseOut={this.hideTooltip}
                 />
             });
@@ -78,8 +79,8 @@ class Heatmap extends React.Component {
     setTooltipPosition = (x, y, tooltipHeight) => {
         let top = 0;
         y = parseInt(y, 10);
-        if (y > tooltipHeight) {
-            top = y - 600;
+        if (y >= tooltipHeight) {
+            top = y - 625;
         }
         if (y < tooltipHeight) {
             top = y - 500;
@@ -87,10 +88,10 @@ class Heatmap extends React.Component {
         return { left: '0px', top: top + 'px', width: null };
     }
 
-    showTooltip = (e, d, xVar, yVar) => {
+    showTooltip = (e, d, xVar, yVar, mapVar) => {
         const xPos = e.target.getAttribute('x');
         const yPos = e.target.getAttribute('y');
-        const tooltipHeight = 100;
+        const tooltipHeight = 200;
         const tPosition = this.setTooltipPosition(xPos, yPos, tooltipHeight);
         this.setState({
             tooltip: {
@@ -100,6 +101,7 @@ class Heatmap extends React.Component {
                     tract: d,
                     xVar: xVar,
                     yVar: yVar,
+                    mapVar: mapVar,
                 }
             }
         });
@@ -114,6 +116,7 @@ class Heatmap extends React.Component {
                     tract: '',
                     xVar: '',
                     yVar: '',
+                    mapVar: '',
                 }
             }
         });

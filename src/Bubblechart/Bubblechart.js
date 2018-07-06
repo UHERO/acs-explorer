@@ -17,6 +17,7 @@ class Bubblechart extends React.Component {
                     tract: '',
                     xVar: '',
                     yVar: '',
+                    mapVar: '',
                 }
             }
         }
@@ -25,7 +26,7 @@ class Bubblechart extends React.Component {
     }
 
     render = () => {
-        const { data, compareTracts, xAxisVar, yAxisVar } = this.props;
+        const { data, compareTracts, selectedMapVar, xAxisVar, yAxisVar } = this.props;
 
         if (data.features) {
             const selectedTracts = compareTracts.map((t) => {
@@ -33,11 +34,11 @@ class Bubblechart extends React.Component {
             });
             const filtered = [];
             data.features.forEach((df) => {
-                if (df.properties[xAxisVar] !== 'N/A' && df.properties[yAxisVar] !== 'N/A') {
+                if (df.properties[xAxisVar] !== 'N/A' && df.properties[yAxisVar] !== 'N/A' && df.properties[selectedMapVar] !== 'N/A') {
                     filtered.push(df);
                 }
             });
-            const margin = { top: 30, right: 20, bottom: 20, left: 40 };
+            const margin = { top: 30, right: 150, bottom: 20, left: 40 };
             const outerWidth = 700, outerHeight = 400;
             const width = outerWidth - margin.left - margin.right;
             const height = outerHeight - margin.top - margin.bottom;
@@ -49,7 +50,7 @@ class Bubblechart extends React.Component {
                 .domain([0, Math.max(...filtered.map(df => df.properties[yAxisVar]))])
                 .range([height, 0]);
             const rScale = scaleLinear()
-                .domain([0, Math.max(...filtered.map(df => df.properties[xAxisVar]))])
+                .domain([0, Math.max(...filtered.map(df => df.properties[selectedMapVar]))])
                 .range([1, 15]);
 
             const yAxis = axisLeft()
@@ -57,34 +58,62 @@ class Bubblechart extends React.Component {
                 .ticks(5, 's');
             const xAxis = axisBottom()
                 .scale(xScale)
-                .ticks(5, 's')
-
+                .ticks(5, 's');
             const points = filtered.map((d, i) => {
                 return <circle
                     key={'circle' + i}
                     cx={xScale(d.properties[xAxisVar])}
                     cy={yScale(d.properties[yAxisVar])}
-                    r={rScale(d.properties[xAxisVar])}
+                    r={rScale(d.properties[selectedMapVar])}
                     fill={'transparent'}
                     stroke={selectedTracts.includes(d.properties['TRACTCE']) ? '#F6A01B' : '#1D667F'}
                     opacity={0.4}
                     strokeWidth={2}
-                    onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar)}
+                    onMouseOver={(event) => this.showTooltip(event, d, xAxisVar, yAxisVar, selectedMapVar)}
                     onMouseOut={this.hideTooltip}
                 />
             });
-            const transform = 'translate(' + margin.left + ', ' + margin.top + ')';
-
+            const legendLabels = rScale.ticks(3).map(rScale.tickFormat(3, 's'));
+            const legend = rScale.ticks(3).map((tick, i) => {
+                const formattedTick = rScale.tickFormat(tick, 's');
+                return <circle
+                    key={'legend' + i}
+                    cx={0}
+                    cy={0}
+                    transform={`translate(0, ${i * 30})`}
+                    r={rScale(tick)}
+                    fill={'transparent'}
+                    stroke={'#ABABAB'}
+                    strokeWidth={2}
+                />
+            });
+            const labels = legendLabels.map((label, i) => {
+                return <text
+                    key={'legend-text' + i}
+                    text={label}
+                    cx={0}
+                    cy={0}
+                    transform={`translate(15, ${i * 35})`}
+                    fill={'#A8A8A8'}
+                >
+                    {label}
+                </text>
+            });
+            const transform = `translate(${margin.left}, ${margin.top})`;
             return (
                 <div id='bubblechart'>
-                <svg width={outerWidth} height={outerHeight} >
-                    <g transform={transform}>
-                        <Axis h={height} axis={yAxis} axisType='y' />
-                        <Axis h={height} axis={xAxis} axisType='x' />
-                        {points}
-                    </g>
-                </svg>
-                <Tooltip tooltip={this.state.tooltip} />
+                    <svg width={outerWidth} height={outerHeight} >
+                        <g transform={transform}>
+                            <Axis h={height} axis={yAxis} axisType='y' />
+                            <Axis h={height} axis={xAxis} axisType='x' />
+                            {points}
+                        </g>
+                        <g id="scatterplot-legend" transform={`translate(${width + 100}, ${margin.top})`}>
+                            {legend}
+                            {labels}
+                        </g>
+                    </svg>
+                    <Tooltip tooltip={this.state.tooltip} />
                 </div>
             );
         }
@@ -97,8 +126,8 @@ class Bubblechart extends React.Component {
         y = parseInt(y, 10);
         x = parseInt(x, 10);
         let top = 0, left = x + 50;
-        if (y > tooltipHeight) {
-            top = y - tooltipHeight - 370;
+        if (y >= tooltipHeight) {
+            top = y - tooltipHeight - 300;
         }
         if (y < tooltipHeight) {
             top = Math.round(y) + 30 - 390;
@@ -109,11 +138,11 @@ class Bubblechart extends React.Component {
         return { left: left + 'px', top: top + 'px', width: '250px' };
     }
 
-    showTooltip = (e, d, xVar, yVar) => {
+    showTooltip = (e, d, xVar, yVar, mapVar) => {
         e.target.style.opacity = 1;
         const xPos = e.target.getAttribute('cx');
         const yPos = e.target.getAttribute('cy');
-        const tooltipHeight = 100;
+        const tooltipHeight = 200;
         const tooltipWidth = 250;
         const tPosition = this.setTooltipPosition(xPos, yPos, tooltipHeight, tooltipWidth);
         this.setState({
@@ -124,6 +153,7 @@ class Bubblechart extends React.Component {
                     tract: d,
                     xVar: xVar,
                     yVar: yVar,
+                    mapVar: mapVar,
                 }
             }
         });
@@ -139,6 +169,7 @@ class Bubblechart extends React.Component {
                     tract: '',
                     xVar: '',
                     yVar: '',
+                    mapVar: '',
                 }
             }
         });

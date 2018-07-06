@@ -156,7 +156,7 @@ class AcsExplorer extends React.Component {
       <div id="dashboard">
         <div ref="vis" id="vis-intro">
           <p>This dashboard uses the 2016 ACS 5-Year estimates for the state of Hawaii. Select a variable from the Map Selector to update the map.
-          This variable also controls the colors of the ranked heatmap below.
+          This variable also controls the colors of the ranked heatmap below, and the size of the circles in the scatter plot.
           The census tracts in the heatmap are sorted by the x-axis variable selected for the scatterplot below the map.
           Click on the census tracts on the map to generate a comparison table at the bottom of the dashboard. Up to two tracts may be selected at a time.</p>
           <p>*Note: The High School Graduates, Bachelor's Degree, and Graduate/Professional Degree variables refer to the highest level of academic achievement.</p>
@@ -178,26 +178,28 @@ class AcsExplorer extends React.Component {
           <Bubblechart
             data={this.state.hiJson}
             compareTracts={this.state.compareTracts}
+            selectedMapVar={this.state.selectedMapVar.value}
             xAxisVar={this.state.selectedXVar.value}
             yAxisVar={this.state.selectedYVar.value}
           />
-          <VariableSelection
-            id={'yVarSelector'}
-            formName={'Y-Axis:'}
-            vars={acsVars}
-            selectedVar={this.state.selectedYVar}
-            onChangeSelected={this.handleYVarChange}
-          />
-          <VariableSelection
-            id={'xVarSelector'}
-            formName={'X-Axis:'}
-            vars={acsVars}
-            selectedVar={this.state.selectedXVar}
-            onChangeSelected={this.handleXVarChange}
-          />
+          <div id="var-selectors">
+            <VariableSelection
+              id={'yVarSelector'}
+              formName={'Y-Axis:'}
+              vars={acsVars}
+              selectedVar={this.state.selectedYVar}
+              onChangeSelected={this.handleYVarChange}
+            />
+            <VariableSelection
+              id={'xVarSelector'}
+              formName={'X-Axis:'}
+              vars={acsVars}
+              selectedVar={this.state.selectedXVar}
+              onChangeSelected={this.handleXVarChange}
+            />
+          </div>
         </div>
         <Heatmap
-          id="heatmap"
           data={this.state.hiJson}
           compareTracts={this.state.compareTracts}
           selectedMapVar={this.state.selectedMapVar.value}
@@ -205,7 +207,6 @@ class AcsExplorer extends React.Component {
           yAxisVar={this.state.selectedYVar.value}
         />
         <ComparisonTable
-          id="comparison-table"
           tracts={this.state.compareTracts}
           vars={acsVars}
         />

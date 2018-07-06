@@ -1,6 +1,8 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
+import { extent } from 'd3';
+import { scaleQuantile } from 'd3-scale';
 import './Map.css';
 
 mapboxgl.accessToken =
@@ -22,7 +24,7 @@ class Map extends React.Component {
       const values = this.getSelectedVarValues(selectedMapVar, hiGeoJson);
       this.map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/light-v9',
+        style: 'mapbox://styles/vward/cjj95ohpl18lt2qlmdn68bwyl',
         center: [-157.9174, 20.2893],
         zoom: 6,
       });
@@ -103,10 +105,11 @@ class Map extends React.Component {
   fillMapColor = (values, selectedMapVar) => {
     // Calculate quintile stops
     let stops = [0];
-    for (let i = 1; i < 5; i++) {
-      const perc = 0.2 * i;
-      stops.push(values[Math.floor(values.length * perc)]);
-    }
+    const colorDomain = extent(values);
+    const colorRange = scaleQuantile().domain(colorDomain).range(colors);
+    colorRange.quantiles().forEach((quantile, index) => {
+      stops.push(Math.floor(quantile));
+    });
     if (!values.length) {
       stops = [0, 0, 0, 0, 0];
     }
@@ -118,7 +121,7 @@ class Map extends React.Component {
     this.setState({
       legend: fill,
     });
-    this.map.setPaintProperty('census-tracts', 'fill-opacity', 0.7);
+    this.map.setPaintProperty('census-tracts', 'fill-opacity', 1);
   }
 
   highlightSelectedTracts = (map, compareTracts) => {
