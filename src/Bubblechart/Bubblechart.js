@@ -3,6 +3,7 @@
 import React from 'react';
 import { scaleLinear } from 'd3-scale';
 import { axisLeft, axisBottom } from 'd3-axis';
+import { format } from 'd3-format';
 import Tooltip from '../Tooltip/Tooltip';
 import Axis from './Axis';
 
@@ -38,7 +39,7 @@ class Bubblechart extends React.Component {
                     filtered.push(df);
                 }
             });
-            const margin = { top: 30, right: 150, bottom: 20, left: 40 };
+            const margin = { top: 30, right: 100, bottom: 20, left: 40 };
             const outerWidth = 700, outerHeight = 400;
             const width = outerWidth - margin.left - margin.right;
             const height = outerHeight - margin.top - margin.bottom;
@@ -51,7 +52,7 @@ class Bubblechart extends React.Component {
                 .range([height, 0]);
             const rScale = scaleLinear()
                 .domain([0, Math.max(...filtered.map(df => df.properties[selectedMapVar]))])
-                .range([1, 15]);
+                .range([1, 20]);
 
             const yAxis = axisLeft()
                 .scale(yScale)
@@ -73,32 +74,6 @@ class Bubblechart extends React.Component {
                     onMouseOut={this.hideTooltip}
                 />
             });
-            const legendLabels = rScale.ticks(3).map(rScale.tickFormat(3, 's'));
-            const legend = rScale.ticks(3).map((tick, i) => {
-                const formattedTick = rScale.tickFormat(tick, 's');
-                return <circle
-                    key={'legend' + i}
-                    cx={0}
-                    cy={0}
-                    transform={`translate(0, ${i * 30})`}
-                    r={rScale(tick)}
-                    fill={'transparent'}
-                    stroke={'#ABABAB'}
-                    strokeWidth={2}
-                />
-            });
-            const labels = legendLabels.map((label, i) => {
-                return <text
-                    key={'legend-text' + i}
-                    text={label}
-                    cx={0}
-                    cy={0}
-                    transform={`translate(15, ${i * 35})`}
-                    fill={'#A8A8A8'}
-                >
-                    {label}
-                </text>
-            });
             const transform = `translate(${margin.left}, ${margin.top})`;
             return (
                 <div id='bubblechart'>
@@ -107,10 +82,6 @@ class Bubblechart extends React.Component {
                             <Axis h={height} axis={yAxis} axisType='y' />
                             <Axis h={height} axis={xAxis} axisType='x' />
                             {points}
-                        </g>
-                        <g id="scatterplot-legend" transform={`translate(${width + 100}, ${margin.top})`}>
-                            {legend}
-                            {labels}
                         </g>
                     </svg>
                     <Tooltip tooltip={this.state.tooltip} />

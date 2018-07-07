@@ -121,7 +121,7 @@ class Map extends React.Component {
     this.setState({
       legend: fill,
     });
-    this.map.setPaintProperty('census-tracts', 'fill-opacity', 1);
+    this.map.setPaintProperty('census-tracts', 'fill-opacity', values.length ? 1 : 0.5);
   }
 
   highlightSelectedTracts = (map, compareTracts) => {
