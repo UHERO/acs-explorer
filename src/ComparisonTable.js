@@ -1,10 +1,15 @@
 import React from 'react';
 import './ComparisonTable.css';
+import PropTypes from 'prop-types';
 
 const ComparisonTable = props => {
-  const { vars, tracts } = props;
+  const { tracts, vars } = props;
   if (!tracts.length) {
-    return <div id="select-note"><p>Select tracts from the map above.</p></div>;
+    return (
+      <div id="select-note">
+        <p>Select tracts from the map above.</p>
+      </div>
+    );
   }
   if (tracts.length) {
     return (
@@ -34,6 +39,11 @@ const ComparisonTable = props => {
       </table>
     );
   }
+};
+
+ComparisonTable.propTypes = {
+  tracts: PropTypes.array.isRequired,
+  vars: PropTypes.object.isRequired,
 };
 
 export default ComparisonTable;

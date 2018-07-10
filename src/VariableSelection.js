@@ -10,31 +10,32 @@ class VariableSelection extends React.Component {
     this.changeSelected = this.changeSelected.bind(this);
   }
 
-  changeSelected = (selectedOption) => {
-    this.props.onChangeSelected(selectedOption);
-  }
+  changeSelected = selectedOption => this.props.onChangeSelected(selectedOption);
 
-  render = () => {
-    return (
-      <div id={this.props.id}>
-        <label style={{fontWeight: 'bold'}}>{this.props.formName}</label><br />
-        <Select
-          name="acs-variable-select"
-          clearable={false}
-          searchable={false}
-          value={this.props.selectedVar}
-          onChange={this.changeSelected}
-          options={Object.values(this.props.vars).map(v => ({
-            value: v,
-            label: v.replace(/_/g, ' '),
-          }))}
-        />
-      </div>
-    );
-  }
+  render = () => (
+    <div id={this.props.id}>
+      <label id={this.props.id} style={{ fontWeight: 'bold' }}>
+        {this.props.formName}
+      </label>
+      <br />
+      <Select
+        name="acs-variable-select"
+        clearable={false}
+        searchable={false}
+        value={this.props.selectedVar}
+        onChange={this.changeSelected}
+        options={Object.values(this.props.vars).map(v => ({
+          value: v,
+          label: v.replace(/_/g, ' '),
+        }))}
+      />
+    </div>
+  );
 }
 
 VariableSelection.propTypes = {
+  id: PropTypes.string,
+  formName: PropTypes.string,
   onChangeSelected: PropTypes.func.isRequired,
   selectedVar: PropTypes.object.isRequired,
   vars: PropTypes.object.isRequired,

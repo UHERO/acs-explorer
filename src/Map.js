@@ -19,8 +19,8 @@ class Map extends React.Component {
     this.fillMapColor = this.fillMapColor.bind(this);
   }
   componentDidMount = () => {
-    const { hiGeoJson, acsVars, selectedMapVar } = this.props;
-    if (hiGeoJson.features) {
+    const { hiGeoJson, selectedMapVar } = this.props;
+    if (hiGeoJson && hiGeoJson.features) {
       const values = this.getSelectedVarValues(selectedMapVar, hiGeoJson);
       this.map = new mapboxgl.Map({
         container: 'map',
@@ -43,10 +43,7 @@ class Map extends React.Component {
         });
         const coordinates = e.lngLat;
         const { properties } = e.features[0];
-        let tooltipInfo = '';
-        Object.values(acsVars).forEach(
-          v => { tooltipInfo += `${v.replace(/_/g, ' ')}: ${properties[v].toLocaleString()}<br>`; }
-        );
+        const tooltipInfo = `${selectedMapVar.replace(/_/g, ' ')}: ${properties[selectedMapVar].toLocaleString()}`;
         const tractName = `<b style="font-weight:bold;">${properties.census_tra}, ${properties.census_t_1}</b>`;
         if (features.length) {
           popup
@@ -67,16 +64,23 @@ class Map extends React.Component {
         highlightSelectedTracts(this.map, this.state.compareTracts);
       });
     }
-  }
+  };
 
   componentWillReceiveProps = (nextProps) => {
     if (this.props.hiGeoJson.features) {
       const values = this.getSelectedVarValues(nextProps.selectedMapVar, nextProps.hiGeoJson);
       this.fillMapColor(values, nextProps.selectedMapVar);
     }
+  };
+
+  getSelectedVarValues = (selectedVar, geoJson) => {
+    return geoJson.features
+      .map(ct => ct.properties[selectedVar])
+      .filter(v => v !== 'N/A')
+      .sort((a, b) => a - b);
   }
 
-  addCensusTractLayer = (map, geoJson) => {
+  addCensusTractLayer = (map, geoJson) => { 
     // Find layer with place names
     const layers = map.getStyle().layers;
     const symbolLayer = layers.find(l => l.type === 'symbol').id;
@@ -93,27 +97,22 @@ class Map extends React.Component {
       // Add symbolLayer after census-tracts, so labels are placed above fill layer
       symbolLayer,
     );
-  }
-
-  getSelectedVarValues = (selectedVar, geoJson) => {
-    return geoJson.features
-      .map(ct => ct.properties[selectedVar])
-      .filter(v => v !== 'N/A')
-      .sort((a, b) => a - b);
-  }
-
+  };
+  
   fillMapColor = (values, selectedMapVar) => {
     // Calculate quintile stops
     let stops = [0];
     const colorDomain = extent(values);
-    const colorRange = scaleQuantile().domain(colorDomain).range(colors);
+    const colorRange = scaleQuantile()
+      .domain(colorDomain)
+      .range(colors);
     colorRange.quantiles().forEach((quantile, index) => {
       stops.push(Math.floor(quantile));
     });
     if (!values.length) {
       stops = [0, 0, 0, 0, 0];
     }
-    const fill = stops.map((stop, index) => { return [stop, colors[index]]; });
+    const fill = stops.map((stop, index) => [stop, colors[index]]);
     this.map.setPaintProperty('census-tracts', 'fill-color', {
       property: selectedMapVar,
       stops: fill,
@@ -122,13 +121,13 @@ class Map extends React.Component {
       legend: fill,
     });
     this.map.setPaintProperty('census-tracts', 'fill-opacity', values.length ? 1 : 0.5);
-  }
+  };
 
   highlightSelectedTracts = (map, compareTracts) => {
     if (typeof this.map.getLayer('selectedTracts') !== 'undefined') {
       this.map.getSource('selectedTracts').setData({
         type: 'FeatureCollection',
-        features: compareTracts
+        features: compareTracts,
       });
       return;
     }
@@ -136,8 +135,8 @@ class Map extends React.Component {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: compareTracts
-      }
+        features: compareTracts,
+      },
     });
     map.addLayer({
       id: 'selectedTracts',
@@ -145,16 +144,19 @@ class Map extends React.Component {
       type: 'line',
       paint: {
         'line-color': '#F6A01B',
-        'line-width': 2
-      }
+        'line-width': 2,
+      },
     });
-  }
+  };
 
   selectTractForComparison = (selectedTract, map, compareTracts) => {
     const tracts = compareTracts;
     const countyFP = selectedTract.properties.COUNTYFP;
     const tractce = selectedTract.properties.TRACTCE;
-    const exist = tracts.findIndex(ct => ct.properties.COUNTYFP === countyFP && ct.properties.TRACTCE === tractce);
+    const exist = tracts.findIndex(
+      ct =>
+      ct.properties.COUNTYFP === countyFP && ct.properties.TRACTCE === tractce
+    );
     if (exist > -1) {
       tracts.splice(exist, 1);
       this.setState({ compareTracts: tracts });
@@ -172,9 +174,8 @@ class Map extends React.Component {
       tracts.push(selectedTract);
       this.setState({ compareTracts: tracts });
       this.props.onUpdateCompare(tracts);
-      return;
     }
-  }
+  };
 
   render = () => {
     const style = {
@@ -183,7 +184,6 @@ class Map extends React.Component {
       width: '100%',
     };
     const { legend } = this.state;
-
     return (
       <div id="map-container">
         <div id="map" style={style} />
@@ -200,13 +200,12 @@ class Map extends React.Component {
         </div>
       </div>
     );
-  }
+  };
 }
 
 Map.propTypes = {
-  hiGeoJson: PropTypes.object.isRequired,
-  acsVars: PropTypes.object.isRequired,
-  selectedMapVar: PropTypes.string.isRequired,
+  hiGeoJson: PropTypes.object,
+  selectedMapVar: PropTypes.string,
 };
 
 export default Map;
