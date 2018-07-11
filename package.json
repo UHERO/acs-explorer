@@ -4,15 +4,15 @@
   "private": true,
   "homepage": "http://www.uhero.hawaii.edu/static/dashboard/acs-explorer",
   "dependencies": {
-    "d3": "^5.0.0",
-    "d3-scale": "^2.0.0",
+    "d3": "^5.5.0",
+    "d3-scale": "^2.1.0",
     "mapbox-gl": "^0.44.2",
-    "prop-types": "^15.6.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "react-scripts": "1.1.0",
     "react-select": "^1.2.1",
-    "semiotic": "^1.7.1"
+    "semiotic": "^1.11.13"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -28,10 +28,10 @@
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.6.1",
-    "prettier": "^1.10.2"
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.0",
+    "eslint-plugin-prettier": "^2.6.2",
+    "eslint-plugin-react": "^7.10.0",
+    "prettier": "^1.13.7"
   }
 }

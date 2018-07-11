@@ -9,8 +9,9 @@ ul li {
 }
 
 .Select {
-    margin-left: 15px;
-    width: 250px;
+    margin-top: 5px;
+    width: 225px;
+    z-index: 10;
 }
 
 .Select .Select-control {

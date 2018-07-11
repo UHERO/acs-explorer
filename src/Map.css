@@ -1,16 +1,12 @@
 #map-container {
     display: grid;
-    grid-template-rows: 500px 550px auto;
     grid-template-areas:
-        'legend'
-        'map'
-        'comparison-table';
-    margin: 40px;
+        'legend' 'map';
 }
 
 #map {
     grid-area: map;
-    grid-column: 1 / span 2;
+    grid-column: 1 / span 1;
     grid-row: 1 / span 1;
 }
 
@@ -18,7 +14,7 @@
     grid-area: legend;
     font-family: sans-serif;
     grid-column: 1 / span 1;
-    grid-row: 1 /span 1;
+    grid-row: 1 / span 1;
     justify-self: start;
     align-self: start;
     z-index: 2;
@@ -38,8 +34,4 @@
 
 .legend-value {
     vertical-align: middle;
-}
-
-#comparison-table {
-    grid-area: comparison-table;
 }

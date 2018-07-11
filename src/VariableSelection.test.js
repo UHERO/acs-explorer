@@ -7,46 +7,44 @@ import VariableSelection from './VariableSelection';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('VariableSelection', () => {
-    let props;
-    let mountedVarSelection;
-    const varSelection = () => {
-        if (!mountedVarSelection) {
-            mountedVarSelection = mount(
-                <VariableSelection {...props} />
-            );
-        }
-        return mountedVarSelection;
+  let props;
+  let mountedVarSelection;
+  const varSelection = () => {
+    if (!mountedVarSelection) {
+      mountedVarSelection = mount(<VariableSelection {...props} />);
     }
+    return mountedVarSelection;
+  };
 
-    beforeEach(() => {
-        props = {
-            vars: {},
-            selectedAcsVar: {},
-            onChangeSelected: jest.fn(),
-        }
-        mountedVarSelection = undefined;
-    });
+  beforeEach(() => {
+    props = {
+      vars: {},
+      selectedAcsVar: 'testVar',
+      onChangeSelected: jest.fn(),
+    };
+    mountedVarSelection = undefined;
+  });
 
-    it('always renders a div', () => {
-        const div = varSelection().find('div');
-        expect(div.length).toBeGreaterThan(0);
-    });
+  it('always renders a div', () => {
+    const div = varSelection().find('div');
+    expect(div.length).toBeGreaterThan(0);
+  });
 
-    describe('the rendered div', () => {
-        it ('contains user instructions and dropdown list', () => {
-           const container = varSelection().first('div');
-           expect(container.children()).toEqual(varSelection().children());
-        });
+  describe('the rendered div', () => {
+    it('contains user instructions and dropdown list', () => {
+      const container = varSelection().first('div');
+      expect(container.children()).toEqual(varSelection().children());
     });
+  });
 
-    it('always renders a Select menu', () => {
-        expect(varSelection().find(Select).length).toBe(1);
-    });
+  it('always renders a Select menu', () => {
+    expect(varSelection().find(Select).length).toBe(1);
+  });
 
-    describe('rendered Select', () => {
-        it('receives props', () => {
-            const selectMenu = varSelection().find(Select);
-            expect(Object.keys(selectMenu.props()).length).toBeGreaterThan(0);
-        });
+  describe('rendered Select', () => {
+    it('receives props', () => {
+      const selectMenu = varSelection().find(Select);
+      expect(Object.keys(selectMenu.props()).length).toBeGreaterThan(0);
     });
+  });
 });
