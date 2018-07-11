@@ -7,8 +7,8 @@ import Heatmap from './Heatmap/Heatmap';
 import ComparisonTable from './ComparisonTable';
 import './AcsExplorer.css';
 
-const baseURL =
-  'https://api.uhero.hawaii.edu/v1/census/data/2016/acs/acs5/profile?get=';
+// const baseURL = 'https://api.uhero.hawaii.edu/v1/census/data/2016/acs/acs5/profile?get=';
+const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
 /* Variables from ACS 5-Year Data Profile API:
 DP02_0001E: Estimate: HOUSEHOLDS BY TYPE Total households
 DP02_0061PE: Percent: EDUCATIONAL ATTAINMENT Population 25 years and over -
@@ -79,12 +79,7 @@ class AcsExplorer extends React.Component {
 
   componentDidMount = () => {
     this.setState({ loading: true });
-    const headers = {
-      Authorization: 'Bearer -VI_yuv0UzZNy4av1SM5vQlkfPK_JKnpGfMzuJR7d0M=',
-    };
-    fetch(baseURL + Object.keys(acsVars).join() + tractParams + key, {
-      headers,
-    })
+    fetch(baseURL + Object.keys(acsVars).join() + tractParams + key)
       .then(response => {
         if (response.ok) {
           return response.json();

@@ -50,8 +50,8 @@ class Bubblechart extends React.Component {
           .domain([0, Math.max(...filtered.map(df => df.properties[selectedMapVar]))])
           .range([1, 20]);
 
-        const yAxis = axisLeft()
-        .scale(yScale)
+      const yAxis = axisLeft()
+          .scale(yScale)
           .ticks(5, 's');
       const xAxis = axisBottom()
           .scale(xScale)
@@ -113,10 +113,10 @@ class Bubblechart extends React.Component {
       this.setState({
         tooltip: {
           display: true,
-        pos: tPosition,
+          pos: tPosition,
           data: {
-          tract: d,
-          xVar,
+            tract: d,
+            xVar: xVar,
             yVar: yVar,
             mapVar: mapVar,
           },
