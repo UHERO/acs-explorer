@@ -7,8 +7,8 @@ import Heatmap from './Heatmap/Heatmap';
 import ComparisonTable from './ComparisonTable';
 import './AcsExplorer.css';
 
-// const baseURL = 'https://api.uhero.hawaii.edu/v1/census/data/2016/acs/acs5/profile?get=';
-const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
+const baseURL = 'https://api.uhero.hawaii.edu/v1/census/data/2016/acs/acs5/profile?get=';
+// const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
 /* Variables from ACS 5-Year Data Profile API:
 DP02_0001E: Estimate: HOUSEHOLDS BY TYPE Total households
 DP02_0061PE: Percent: EDUCATIONAL ATTAINMENT Population 25 years and over -
@@ -75,11 +75,14 @@ class AcsExplorer extends React.Component {
     };
     this.handleMapVarChange = this.handleMapVarChange.bind(this);
     this.updateTractComparisons = this.updateTractComparisons.bind(this);
+    this.headers = new Headers();
+    this.headers.append('Authorization', 'Bearer -VI_yuv0UzZNy4av1SM5vQlkfPK_JKnpGfMzuJR7d0M=');
+    this.requestOptionsArgs = { headers: this.headers };
   }
 
   componentDidMount = () => {
     this.setState({ loading: true });
-    fetch(baseURL + Object.keys(acsVars).join() + tractParams + key)
+    fetch(baseURL + Object.keys(acsVars).join() + tractParams + key, this.requestOptionsArgs)
       .then(response => {
         if (response.ok) {
           return response.json();
