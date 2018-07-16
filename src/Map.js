@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import { extent } from 'd3';
 import { scaleQuantile } from 'd3-scale';
+import mapStyle from './Mapbox/style.json';
 import './Map.css';
 
 mapboxgl.accessToken =
@@ -24,7 +25,7 @@ class Map extends React.Component {
       const values = this.getSelectedVarValues(selectedMapVar, hiGeoJson);
       this.map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/vward/cjj95ohpl18lt2qlmdn68bwyl',
+        style: mapStyle,
         center: [-157.9174, 20.2893],
         zoom: 6,
       });

@@ -2,8 +2,7 @@ import React from 'react';
 import Map from './Map';
 import VariableSelection from './VariableSelection';
 // import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
-import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts2.json';
-import tractNames from './cb_2017_15_tract_500k/census_tract_names.csv';
+import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import Bubblechart from './Bubblechart/Bubblechart';
 import Heatmap from './Heatmap/Heatmap';
 import ComparisonTable from './ComparisonTable';
@@ -102,15 +101,7 @@ class AcsExplorer extends React.Component {
           });
           return obj;
         });
-        console.log('tract names', tractNames)
-        console.log('hiGeoJson', higeojson)
         higeojson.features.forEach(ct => {
-          if (ct.properties.census_tra === "Kaho’olawe") {
-            console.log('kahoolawe', ct)
-          }
-          if (ct.properties.COUNTYFP === '003' && ct.properties.TRACTCE === '980000') {
-            console.log('003', ct)
-          }
           // Join ACS data with GeoJSON
           this.addAcsToGeoJson(ct, formattedCensusData);
         });
