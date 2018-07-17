@@ -1,6 +1,7 @@
 import React from 'react';
 import Map from './Map';
 import VariableSelection from './VariableSelection';
+// import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import Bubblechart from './Bubblechart/Bubblechart';
 import Heatmap from './Heatmap/Heatmap';
@@ -116,8 +117,7 @@ class AcsExplorer extends React.Component {
   addAcsToGeoJson = (ct, acsData) => {
     const tractce = ct.properties.TRACTCE;
     const countyFP = ct.properties.COUNTYFP;
-    const match = acsData.findIndex(d => d.tract === tractce && d.county === countyFP,
-    );
+    const match = acsData.findIndex(d => d.tract === tractce && d.county === countyFP);
     if (match > -1) {
       Object.keys(acsData[match]).forEach(k => {
         const missing = (+acsData[match][k] < 0);
