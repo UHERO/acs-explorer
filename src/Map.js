@@ -10,6 +10,8 @@ mapboxgl.accessToken =
   'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
 
 const colors = ['#EFF3FF', '#BDD7E7', '#6BAED6', '#3182BD', '#08519C'];
+let popup;
+
 class Map extends React.Component {
   constructor(props) {
     super(props);
@@ -17,10 +19,6 @@ class Map extends React.Component {
       compareTracts: [],
       legend: [],
     };
-    this.popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-    });
     this.fillMapColor = this.fillMapColor.bind(this);
   }
   componentDidMount = () => {
@@ -38,7 +36,10 @@ class Map extends React.Component {
         this.addCensusTractLayer(this.map, hiGeoJson);
         this.fillMapColor(values, selectedMapVar);
       });
-      const popup = this.popup;
+      popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+      });
       const setTooltipInfo = (e) => this.setTooltipInfo(e, selectedMapVar, popup, this.map);
       this.map.on('mousemove', 'census-tracts', function (e) {
         setTooltipInfo(e, selectedMapVar, popup, this);
@@ -59,7 +60,6 @@ class Map extends React.Component {
     if (this.props.hiGeoJson.features && this.props !== prevProps) {
       const values = this.getSelectedVarValues(this.props.selectedMapVar, this.props.hiGeoJson);
       this.fillMapColor(values, this.props.selectedMapVar);
-      const popup = this.popup;
       const selectedMapVar = this.props.selectedMapVar;
       const setTooltipInfo = (e) => this.setTooltipInfo(e, selectedMapVar, popup, this.map);
       this.map.on('mousemove', 'census-tracts', function (e) {
