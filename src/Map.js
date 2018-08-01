@@ -3,12 +3,15 @@ import mapboxgl from 'mapbox-gl';
 import PropTypes from 'prop-types';
 import { extent } from 'd3';
 import { scaleQuantile } from 'd3-scale';
+import mapStyle from './Mapbox/style.json';
 import './Map.css';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidndhcmQiLCJhIjoiY2pmbjdqY3BxMTRsbzJ4bmFlbjdxcnlzNyJ9.YEUuGQyTt3gUswT1zTUQJQ';
 
 const colors = ['#EFF3FF', '#BDD7E7', '#6BAED6', '#3182BD', '#08519C'];
+let popup;
+
 class Map extends React.Component {
   constructor(props) {
     super(props);
@@ -24,7 +27,7 @@ class Map extends React.Component {
       const values = this.getSelectedVarValues(selectedMapVar, hiGeoJson);
       this.map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/vward/cjj95ohpl18lt2qlmdn68bwyl',
+        style: mapStyle,
         center: [-157.9174, 20.2893],
         zoom: 6,
       });
@@ -33,26 +36,13 @@ class Map extends React.Component {
         this.addCensusTractLayer(this.map, hiGeoJson);
         this.fillMapColor(values, selectedMapVar);
       });
-      const popup = new mapboxgl.Popup({
+      popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
       });
+      const setTooltipInfo = (e) => this.setTooltipInfo(e, selectedMapVar, popup, this.map);
       this.map.on('mousemove', 'census-tracts', function (e) {
-        const features = this.queryRenderedFeatures(e.point, {
-          layers: ['census-tracts'],
-        });
-        const coordinates = e.lngLat;
-        const { properties } = e.features[0];
-        const tooltipInfo = `${selectedMapVar.replace(/_/g, ' ')}: ${properties[selectedMapVar].toLocaleString()}`;
-        const tractName = `<b style="font-weight:bold;">${properties.census_tra}, ${properties.census_t_1}</b>`;
-        if (features.length) {
-          popup
-            .setLngLat(coordinates)
-            .setHTML(`${tractName}<br>${tooltipInfo}`)
-            .addTo(this);
-        } else {
-          popup.remove();
-        }
+        setTooltipInfo(e, selectedMapVar, popup, this);
       });
       this.map.on('mouseleave', 'census-tracts', () => {
         popup.remove();
@@ -66,12 +56,35 @@ class Map extends React.Component {
     }
   };
 
-  componentWillReceiveProps = (nextProps) => {
-    if (this.props.hiGeoJson.features) {
-      const values = this.getSelectedVarValues(nextProps.selectedMapVar, nextProps.hiGeoJson);
-      this.fillMapColor(values, nextProps.selectedMapVar);
+  componentDidUpdate = (prevProps) => {
+    if (this.props.hiGeoJson.features && this.props !== prevProps) {
+      const values = this.getSelectedVarValues(this.props.selectedMapVar, this.props.hiGeoJson);
+      this.fillMapColor(values, this.props.selectedMapVar);
+      const selectedMapVar = this.props.selectedMapVar;
+      const setTooltipInfo = (e) => this.setTooltipInfo(e, selectedMapVar, popup, this.map);
+      this.map.on('mousemove', 'census-tracts', function (e) {
+        setTooltipInfo(e, selectedMapVar, popup, this);
+      });
     }
-  };
+  }
+
+  setTooltipInfo = (e, mapVar, popup, map) => {
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: ['census-tracts'],
+    });
+    const coordinates = e.lngLat;
+    const { properties } = e.features[0];
+    const tooltipInfo = `${mapVar.replace(/_/g, ' ')}: ${properties[mapVar].toLocaleString()}`;
+    const tractName = `<b style="font-weight:bold;">${properties.census_tra}, ${properties.census_t_1}</b>`;
+    if (features.length) {
+      popup
+        .setLngLat(coordinates)
+        .setHTML(`${tractName}<br>${tooltipInfo}`)
+        .addTo(map);
+    } else {
+      popup.remote();
+    }
+  }
 
   getSelectedVarValues = (selectedVar, geoJson) => {
     return geoJson.features
@@ -80,7 +93,7 @@ class Map extends React.Component {
       .sort((a, b) => a - b);
   }
 
-  addCensusTractLayer = (map, geoJson) => { 
+  addCensusTractLayer = (map, geoJson) => {
     // Find layer with place names
     const layers = map.getStyle().layers;
     const symbolLayer = layers.find(l => l.type === 'symbol').id;
@@ -98,7 +111,7 @@ class Map extends React.Component {
       symbolLayer,
     );
   };
-  
+
   fillMapColor = (values, selectedMapVar) => {
     // Calculate quintile stops
     let stops = [0];
@@ -155,7 +168,7 @@ class Map extends React.Component {
     const tractce = selectedTract.properties.TRACTCE;
     const exist = tracts.findIndex(
       ct =>
-      ct.properties.COUNTYFP === countyFP && ct.properties.TRACTCE === tractce
+        ct.properties.COUNTYFP === countyFP && ct.properties.TRACTCE === tractce
     );
     if (exist > -1) {
       tracts.splice(exist, 1);
