@@ -1,7 +1,6 @@
 import React from 'react';
 import Map from './Map';
 import VariableSelection from './VariableSelection';
-// import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import higeojson from './cb_2017_15_tract_500k/hawaii_2017_census_tracts/hawaii2017censustracts.json';
 import Bubblechart from './Bubblechart/Bubblechart';
 import Heatmap from './Heatmap/Heatmap';
@@ -9,7 +8,6 @@ import ComparisonTable from './ComparisonTable';
 import './AcsExplorer.css';
 
 const baseURL = 'https://api.uhero.hawaii.edu/v1/census/data/2016/acs/acs5/profile?get=';
-// const baseURL = 'https://api.census.gov/data/2016/acs/acs5/profile?get=';
 /* Variables from ACS 5-Year Data Profile API:
 DP02_0001E: Estimate: HOUSEHOLDS BY TYPE Total households
 DP02_0061PE: Percent: EDUCATIONAL ATTAINMENT Population 25 years and over -
@@ -77,7 +75,7 @@ class AcsExplorer extends React.Component {
     this.handleMapVarChange = this.handleMapVarChange.bind(this);
     this.updateTractComparisons = this.updateTractComparisons.bind(this);
     this.headers = new Headers();
-    this.headers.append('Authorization', 'Bearer -VI_yuv0UzZNy4av1SM5vQlkfPK_JKnpGfMzuJR7d0M=');
+    this.headers.append('Authorization', 'Bearer XqxWBGD5o3U1jRHK8XiOefR_Lcr1Sv1vFAAzG8OAYxo=');
     this.requestOptionsArgs = { headers: this.headers };
   }
 
