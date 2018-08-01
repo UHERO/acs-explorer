@@ -10,7 +10,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.0",
+    "react-scripts": "1.1.4",
     "react-select": "^1.2.1",
     "semiotic": "^1.11.13"
   },
