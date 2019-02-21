@@ -4,15 +4,15 @@
   "private": true,
   "homepage": "http://www.uhero.hawaii.edu/static/dashboard/acs-explorer",
   "dependencies": {
-    "d3": "^5.5.0",
-    "d3-scale": "^2.1.0",
+    "d3": "^5.9.1",
+    "d3-scale": "^2.2.2",
     "mapbox-gl": "^0.44.2",
-    "prop-types": "^15.6.2",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-scripts": "^2.1.3",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "react-scripts": "^2.1.5",
     "react-select": "^1.2.1",
-    "semiotic": "^1.11.13"
+    "semiotic": "^1.16.8"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -23,15 +23,15 @@
     "lint-fix": "eslint  . --fix"
   },
   "devDependencies": {
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.9.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-jsx-a11y": "^6.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^2.6.2",
-    "eslint-plugin-react": "^7.10.0",
-    "prettier": "^1.13.7"
+    "eslint-plugin-react": "^7.12.4",
+    "prettier": "^1.16.4"
   },
   "browserslist": [
     ">0.2%",
